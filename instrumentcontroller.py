@@ -6,7 +6,7 @@ import numpy as np
 from PyQt5.QtCore import QObject, pyqtSlot, pyqtSignal
 from forgot_again.file import load_ast_if_exists, pprint_to_file
 
-from instr.instrumentfactory import mock_enabled, SourceFactory, AnalyzerFactory
+from instr.instrumentfactory import mock_enabled, SourceFactory, PowerMeterFactory, GeneratorFactory
 from measureresult import MeasureResult
 from secondaryparams import SecondaryParams
 
@@ -23,12 +23,14 @@ class InstrumentController(QObject):
         super().__init__(parent=parent)
 
         addrs = load_ast_if_exists('instr.ini', default={
-            'Анализатор': 'GPIB1::18::INSTR',
-            'Источник': 'GPIB1::3::INSTR',
+            'Генератор': 'GPIB1::18::INSTR',
+            'Изм. мощности': 'GPIB1::3::INSTR',
+            'Источник': 'GPIB1::9::INSTR',
         })
 
         self.requiredInstruments = {
-            'Анализатор': AnalyzerFactory(addrs['Анализатор']),
+            'Генератор': GeneratorFactory(addrs['Генератор']),
+            'Изм. мощности': PowerMeterFactory(addrs['Изм. мощности']),
             'Источник': SourceFactory(addrs['Источник']),
         }
 
