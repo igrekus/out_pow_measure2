@@ -35,72 +35,66 @@ class InstrumentController(QObject):
         }
 
         self.deviceParams = {
-            'ГУН': {
+            '---': {
                 'F': 1,
             },
         }
 
         self.secondaryParams = SecondaryParams(required={
-            'sep_4': ['', {'value': None}],
-            'u_src_drift_1': [
-                'Uп=',
-                {'start': 0.0, 'end': 10.0, 'step': 0.5, 'value': 4.7, 'suffix': ' В'}
+            'f_min': [
+                'Fн=',
+                {'start': 0.0, 'end': 10.0, 'step': 1.0, 'value': 1.0, 'suffix': ' ГГц'}
             ],
-            'u_src_drift_2': [
-                'Uдр. мин=',
-                {'start': 0.0, 'end': 10.0, 'step': 0.5, 'value': 5.0, 'suffix': ' В'}
+            'f_max': [
+                'Fв=',
+                {'start': 0.0, 'end': 10.0, 'step': 1.0, 'value': 1.0, 'suffix': ' ГГц'}
             ],
-            'u_src_drift_3': [
-                'Uдр. макс=',
-                {'start': 0.0, 'end': 10.0, 'step': 0.5, 'value': 5.3, 'suffix': ' В'}
+            'f_delta': [
+                'ΔF=',
+                {'start': 0.0, 'end': 10.0, 'step': 1.0, 'value': 1.0, 'suffix': ' ГГц'}
             ],
             'i_src_max': [
                 'Iп.макс=',
-                {'start': 0.0, 'end': 500.0, 'step': 1.0, 'value': 50.0, 'suffix': ' мА'}
+                {'start': 0.0, 'end': 500.0, 'step': 1.0, 'value': 20.0, 'suffix': ' мА'}
+            ],
+            'u_src_max': [
+                'Uп.=',
+                {'start': 0.0, 'end': 12.0, 'step': 0.1, 'value': 3.0, 'suffix': ' В'}
             ],
             'sep_1': ['', {'value': None}],
-            'u_vco_min': [
-                'Uупр.мин.=',
-                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'decimals': 2, 'value': 0.0, 'suffix': ' В'}
-            ],
-            'u_vco_max': [
-                'Uупр.макс.=',
-                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'decimals': 2, 'value': 10.0, 'suffix': ' В'}
-            ],
-            'u_vco_delta': [
-                'ΔUупр=',
-                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'decimals': 2, 'value': 1.0, 'suffix': ' В'}
+            'avg': [
+                'Уср.=',
+                {'start': 0, 'end': 50, 'step': 1, 'value': 1, 'suffix': ''}
             ],
             'sep_2': ['', {'value': None}],
-            'sa_min': [
-                'SA start=',
-                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 1.0, 'suffix': ' ГГц'}
+            'x_start': [
+                'Xstart=',
+                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 10.0, 'suffix': ' ?'}
             ],
-            'sa_max': [
-                'SA stop=',
-                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 1.0, 'suffix': ' ГГц'}
+            'x_scale': [
+                'Xscale=',
+                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 10.0, 'suffix': ' ?'}
             ],
-            'sa_rlev': [
-                'SA ref lev=',
-                {'start': -30.0, 'end': 30.0, 'step': 1.0, 'value': 10.0, 'suffix': ' дБ'}
+            'y_start': [
+                'Ystart=',
+                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 10.0, 'suffix': ' ?'}
             ],
-            'sa_span': [
-                'SA span=',
-                {'start': 0.0, 'end': 30000.0, 'step': 1.0, 'value': 50.0, 'suffix': ' МГц'}
+            'y_scale': [
+                'Yscale=',
+                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 10.0, 'suffix': ' ?'}
             ],
-            'sep_3': ['', {'value': None}],
-            'file_name': [
-                'Имя файла=',
-                {'value': 'test', }
+            'trig_level': [
+                'Ур. сраб.=',
+                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 10.0, 'suffix': ' ?'}
             ],
-            # 'is_harm_relative': [
-            #     'Отн.ур.гармоник',
-            #     {'value': False}
-            # ],
-            # 'is_u_src_drift': [
-            #     'Дрейф от Uп',
-            #     {'value': False}
-            # ],
+            'mark_1': [
+                'Маркер 1=',
+                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 10.0, 'suffix': ' ?'}
+            ],
+            'mark_2': [
+                'Маркер 2=',
+                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 10.0, 'suffix': ' ?'}
+            ],
         })
         self.secondaryParams.load_from_config('params.ini')
 
