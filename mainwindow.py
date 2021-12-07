@@ -11,8 +11,8 @@ from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot
 
 from formlayout.formlayout import fedit
 from instrumentcontroller import InstrumentController
-from measurewidgetwithsecondaryparams import MeasureWidgetWithSecondaryParameters
 from mytools.connectionwidgetwithworker import ConnectionWidgetWithWorker
+from mytools.paraminputwidget import ParamInputWidget
 from primaryplotwidget import PrimaryPlotWidget
 
 
@@ -26,7 +26,11 @@ class MainWindow(QMainWindow):
 
         self._instrumentController = InstrumentController(parent=self)
         self._connectionWidget = ConnectionWidgetWithWorker(parent=self, controller=self._instrumentController)
-        self._measureWidget = MeasureWidgetWithSecondaryParameters(parent=self, controller=self._instrumentController)
+        self._paramInputWidget = ParamInputWidget(
+            parent=self,
+            primaryParams=self._instrumentController.deviceParams,
+            secondaryParams=self._instrumentController.secondaryParams,
+        )
         self._plotWidget = PrimaryPlotWidget(parent=self, controller=self._instrumentController)
 
         # init UI
@@ -34,28 +38,17 @@ class MainWindow(QMainWindow):
         self.setWindowTitle('Измерение выходной мощности')
 
         self._ui.layInstrs.insertWidget(0, self._connectionWidget)
-        self._ui.layInstrs.insertWidget(1, self._measureWidget)
+        self._ui.layInstrs.insertWidget(1, self._paramInputWidget)
         self._ui.tabWidget.insertTab(0, self._plotWidget, 'Прогресс измерения')
-
-        # specific UI tweaks
-        self._measureWidget._ui.btnCalibrateLO.hide()
-        self._measureWidget._ui.btnCalibrateMod.hide()
-        self._measureWidget._ui.btnCalibrateRF.hide()
 
         self._init()
 
     def _init(self):
         self._connectionWidget.connected.connect(self.on_instrumens_connected)
-        self._connectionWidget.connected.connect(self._measureWidget.on_instrumentsConnected)
-
-        self._measureWidget.secondaryChanged.connect(self._instrumentController.on_secondary_changed)
-
-        self._measureWidget.measureStarted.connect(self.on_measureStarted)
-        self._measureWidget.measureComplete.connect(self.on_measureComplete)
 
         self._instrumentController.pointReady.connect(self.on_point_ready)
 
-        self._measureWidget.updateWidgets(self._instrumentController.secondaryParams)
+        self._paramInputWidget.loadConfig()
 
     def _saveScreenshot(self):
         screen = QGuiApplication.primaryScreen()
@@ -118,10 +111,10 @@ class MainWindow(QMainWindow):
         self._plotWidget.plot()
 
     def closeEvent(self, _):
-        self._instrumentController.saveConfigs()
-        self._measureWidget.cancel()
-        while self._measureWidget._threads.activeThreadCount() > 0:
-            time.sleep(0.1)
+        self._paramInputWidget.saveConfig()
+        # self._paramInputWidget.cancel()  # TODO ad cancellation on close
+        # while self._paramInputWidget._threads.activeThreadCount() > 0:
+        #     time.sleep(0.1)
 
     @pyqtSlot()
     def on_btnExcel_clicked(self):

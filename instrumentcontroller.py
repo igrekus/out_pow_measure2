@@ -95,8 +95,7 @@ class InstrumentController(QObject):
                 'Маркер 2=',
                 {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 10.0, 'suffix': ' ?'}
             ],
-        })
-        self.secondaryParams.load_from_config('params.ini')
+        }, file_name='params.ini')
 
         self._calibrated_pows_lo = load_ast_if_exists('cal_lo.ini', default={})
         self._calibrated_pows_mod = load_ast_if_exists('cal_mod.ini', default={})
