@@ -1,14 +1,14 @@
 import datetime
 import os
-import time
 
 from subprocess import Popen
 
 from PyQt5 import uic
 from PyQt5.QtGui import QGuiApplication
 from PyQt5.QtWidgets import QMainWindow
-from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot
+from PyQt5.QtCore import Qt, pyqtSlot
 
+from calibrationwidget import CalibrationWidget
 from formlayout.formlayout import fedit
 from instrumentcontroller import InstrumentController
 from mytools.connectionwidgetwithworker import ConnectionWidgetWithWorker
@@ -31,7 +31,8 @@ class MainWindow(QMainWindow):
             primaryParams=self._instrumentController.deviceParams,
             secondaryParams=self._instrumentController.secondaryParams,
         )
-        self._plotWidget = PrimaryPlotWidget(parent=self, controller=self._instrumentController)
+        # self._plotWidget = PrimaryPlotWidget(parent=self, controller=self._instrumentController)
+        self._calibWidget = CalibrationWidget(parent=self, controller=self._instrumentController)
 
         # init UI
         self._ui = uic.loadUi('mainwindow.ui', self)
@@ -39,7 +40,8 @@ class MainWindow(QMainWindow):
 
         self._ui.layInstrs.insertWidget(0, self._connectionWidget)
         self._ui.layInstrs.insertWidget(1, self._paramInputWidget)
-        self._ui.tabWidget.insertTab(0, self._plotWidget, 'Прогресс измерения')
+
+        self._ui.tabWidget.insertTab(0, self._calibWidget, 'Калибровка')
 
         self._init()
 
@@ -76,19 +78,17 @@ class MainWindow(QMainWindow):
     def on_measureComplete(self):
         print('meas complete')
         self._instrumentController.result._process()
-        self._plotWidget.plot()
+        # self._plotWidget.plot()
         self._instrumentController.result.save_adjustment_template()
 
     @pyqtSlot()
     def on_measureStarted(self):
-        self._plotWidget.clear()
+        # self._plotWidget.clear()
+        pass
 
     @pyqtSlot()
     def on_actParams_triggered(self):
         data = [
-            ('Корректировка', self._instrumentController.result.adjust),
-            ('Калибровка', self._instrumentController.cal_set),
-            ('Только основные', self._plotWidget.only_main_states),
             ('Набор для коррекции', [1, '+25', '+85', '-60']),
         ]
 
@@ -96,19 +96,12 @@ class MainWindow(QMainWindow):
         if not values:
             return
 
-        adjust, cal_set, only_main_states, adjust_set = values
-
-        self._instrumentController.result.adjust = adjust
-        self._instrumentController.result.adjust_set = adjust_set
-        self._instrumentController.cal_set = cal_set
-        self._instrumentController.only_main_states = only_main_states
-        self._instrumentController.result.only_main_states = only_main_states
-        self._plotWidget.only_main_states = only_main_states
+        adjust_set = values
 
     @pyqtSlot()
     def on_point_ready(self):
         self._ui.pteditProgress.setPlainText(self._instrumentController.result.report)
-        self._plotWidget.plot()
+        # self._plotWidget.plot()
 
     def closeEvent(self, _):
         self._paramInputWidget.saveConfig()

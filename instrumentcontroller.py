@@ -97,16 +97,12 @@ class InstrumentController(QObject):
             ],
         }, file_name='params.ini')
 
-        self._calibrated_pows_lo = load_ast_if_exists('cal_lo.ini', default={})
-        self._calibrated_pows_mod = load_ast_if_exists('cal_mod.ini', default={})
-        self._calibrated_pows_rf = load_ast_if_exists('cal_rf.ini', default={})
+        self._cal_in = load_ast_if_exists('cal_in.ini', default={})
+        self._cal_out = load_ast_if_exists('cal_out.ini', default={})
+
+        self.found = False
 
         self._instruments = dict()
-        self.found = False
-        self.present = False
-        self.hasResult = False
-
-        self.result = MeasureResult()
 
     def __str__(self):
         return f'{self._instruments}'
@@ -119,6 +115,7 @@ class InstrumentController(QObject):
         print(f'searching for {addrs}')
         for k, v in addrs.items():
             self.requiredInstruments[k].addr = v
+
         self.found = self._find()
 
     def _find(self):
@@ -126,41 +123,32 @@ class InstrumentController(QObject):
             k: v.find() for k, v in self.requiredInstruments.items()
         }
         return all(self._instruments.values())
-
-    def check(self, token, params):
-        print(f'call check with {token} {params}')
-        device, secondary = params
-        self.present = self._check(token, device, secondary)
-        print('sample pass')
-
-    def _check(self, token, device, secondary):
-        print(f'launch check with {self.deviceParams[device]} {self.secondaryParams}')
-        self._init()
-        return True
     # endregion
 
     # region calibrations
-    def calibrate(self, token, params):
-        print(f'call calibrate with {token} {params}')
-        return self._calibrate(token, self.secondaryParams)
+    def calibrateIn(self, **kwargs):
+        report_fn = kwargs.pop('report_fn')
+        token = kwargs.pop('token')
+        params = kwargs.pop('params')
+        print(f'call calibrate in with {report_fn} {token} {params}')
 
-    def _calibrateLO(self, token, secondary):
-        print('run calibrate LO with', secondary)
-        result = {}
-        self._calibrated_pows_lo = result
-        return True
+        for i in range(10):
+            time.sleep(0.1)
+            report_fn({'cal_in_index': i})
 
-    def _calibrateRF(self, token, secondary):
-        print('run calibrate RF')
-        result = {}
-        self._calibrated_pows_rf = result
-        return True
+        return True, 'calibrate in done'
 
-    def _calibrateMod(self, token, secondary):
-        print('calibrate mod gen')
-        result = {}
-        self._calibrated_pows_mod = result
-        return True
+    def calibrateOut(self, **kwargs):
+        report_fn = kwargs.pop('report_fn')
+        token = kwargs.pop('token')
+        params = kwargs.pop('params')
+        print(f'call calibrate out with {report_fn} {token} {params}')
+
+        for i in range(10):
+            time.sleep(0.1)
+            report_fn({'cal_out_index': i})
+
+        return True, 'calibrate out done'
     # endregion
 
     # region initialization
