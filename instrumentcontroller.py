@@ -100,8 +100,6 @@ class InstrumentController(QObject):
         self._cal_in = load_ast_if_exists('cal_in.ini', default={})
         self._cal_out = load_ast_if_exists('cal_out.ini', default={})
 
-        self.found = False
-
         self._instruments = dict()
 
     def __str__(self):
@@ -116,7 +114,11 @@ class InstrumentController(QObject):
         for k, v in addrs.items():
             self.requiredInstruments[k].addr = v
 
-        self.found = self._find()
+        ok = self._find()
+        if ok:
+            return ok, 'instruments found'
+        else:
+            return ok, 'instrument find error'
 
     def _find(self):
         self._instruments = {
