@@ -52,6 +52,8 @@ class MainWindow(QMainWindow):
 
         self._paramInputWidget.loadConfig()
 
+        self._ui.tabWidget.setEnabled(False)
+
     def _saveScreenshot(self):
         screen = QGuiApplication.primaryScreen()
         if not screen:
@@ -73,6 +75,7 @@ class MainWindow(QMainWindow):
     @pyqtSlot()
     def on_instrumens_connected(self):
         print(f'connected {self._instrumentController}')
+        self._ui.tabWidget.setEnabled(True)
 
     @pyqtSlot()
     def on_measureComplete(self):
