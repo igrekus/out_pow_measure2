@@ -14,6 +14,7 @@ from instrumentcontroller import InstrumentController
 from mytools.connectionwidgetwithworker import ConnectionWidgetWithWorker
 from mytools.paraminputwidget import ParamInputWidget
 from primaryplotwidget import PrimaryPlotWidget
+from pulsemodewidget import PulseModeWidget
 
 
 class MainWindow(QMainWindow):
@@ -33,6 +34,8 @@ class MainWindow(QMainWindow):
         )
         # self._plotWidget = PrimaryPlotWidget(parent=self, controller=self._instrumentController)
         self._calibWidget = CalibrationWidget(parent=self, controller=self._instrumentController)
+        self._pulseWidget = PulseModeWidget(parent=self, controller=self._instrumentController)
+        # self._pulseWidget = PulseModeWidget(parent=self, controller=self._instrumentController)
 
         # init UI
         self._ui = uic.loadUi('mainwindow.ui', self)
@@ -41,7 +44,8 @@ class MainWindow(QMainWindow):
         self._ui.layInstrs.insertWidget(0, self._connectionWidget)
         self._ui.layInstrs.insertWidget(1, self._paramInputWidget)
 
-        self._ui.tabWidget.insertTab(0, self._calibWidget, 'Калибровка')
+        self._ui.tabWidget.addTab(self._calibWidget, 'Калибровка')
+        self._ui.tabWidget.addTab(self._pulseWidget, 'Импульсный режим')
 
         self._init()
 
