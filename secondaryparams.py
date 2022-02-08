@@ -7,6 +7,9 @@ class SecondaryParams:
         self._params = None
         self.file_name = file_name
 
+    def __str__(self):
+        return f'SecondaryParams: {self._params}'
+
     @property
     def params(self):
         if self._params is None:

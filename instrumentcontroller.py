@@ -43,21 +43,33 @@ class InstrumentController(QObject):
         self.secondaryParams = SecondaryParams(required={
             'f_min': [
                 'Fн=',
-                {'start': 0.0, 'end': 10.0, 'step': 1.0, 'value': 1.0, 'suffix': ' ГГц'}
+                {'start': 0.0, 'end': 40.0, 'step': 1.0, 'value': 0.1, 'decimals': 3, 'suffix': ' ГГц'}
             ],
             'f_max': [
                 'Fв=',
-                {'start': 0.0, 'end': 10.0, 'step': 1.0, 'value': 1.0, 'suffix': ' ГГц'}
+                {'start': 0.0, 'end': 40.0, 'step': 1.0, 'value': 0.3, 'decimals': 3, 'suffix': ' ГГц'}
             ],
             'f_delta': [
                 'ΔF=',
-                {'start': 0.0, 'end': 10.0, 'step': 1.0, 'value': 1.0, 'suffix': ' ГГц'}
+                {'start': 0.0, 'end': 40.0, 'step': 1.0, 'value': 0.1, 'decimals': 3, 'suffix': ' ГГц'}
+            ],
+            'p_min': [
+                'Pн=',
+                {'start': -30.0, 'end': 30.0, 'step': 1.0, 'value': 0.0, 'suffix': ' дБм'}
+            ],
+            'p_max': [
+                'Pв=',
+                {'start': -30.0, 'end': 30.0, 'step': 1.0, 'value': 10.0, 'suffix': ' дБм'}
+            ],
+            'p_delta': [
+                'ΔP=',
+                {'start': 0.0, 'end': 30.0, 'step': 1.0, 'value': 5.0, 'suffix': ' дБм'}
             ],
             'i_src_max': [
                 'Iп.макс=',
                 {'start': 0.0, 'end': 500.0, 'step': 1.0, 'value': 20.0, 'suffix': ' мА'}
             ],
-            'u_src_max': [
+            'u_src': [
                 'Uп.=',
                 {'start': 0.0, 'end': 12.0, 'step': 0.1, 'value': 3.0, 'suffix': ' В'}
             ],
@@ -131,12 +143,92 @@ class InstrumentController(QObject):
     def calibrateIn(self, **kwargs):
         report_fn = kwargs.pop('report_fn')
         token = kwargs.pop('token')
-        params = kwargs.pop('params')
+        params = kwargs.pop('params').params
         print(f'call calibrate in with {report_fn} {token} {params}')
 
-        for i in range(10):
-            time.sleep(0.1)
-            report_fn({'cal_in_index': i})
+        gen = self._instruments['Генератор']
+        meter = self._instruments['Изм. мощности']
+
+        f_min = params['f_min'] * GIGA
+        f_max = params['f_max'] * GIGA
+        f_delta = params['f_delta'] * GIGA
+        p_min = params['p_min']
+        p_max = params['p_max']
+        p_delta = params['p_delta']
+
+        avg = params['avg']
+
+        pows = [round(x, 1) for x in np.arange(start=p_min, stop=p_max + 0.0001, step=p_delta)]
+        freqs = [round(x) for x in np.arange(start=f_min, stop=f_max + 0.0001, step=f_delta)]
+
+        self._init()
+
+        meter.send(f'SENS1:AVER:COUN {avg}')
+        meter.send('FORM ASCII')
+        # meter.send('TRIG:SOUR INT1')
+        # meter.send('INIT:CONT ON')
+
+        # автоматическое измерение ошибается в первой точке, измеряем пустышку
+        # почему - хз
+        gen.send(f'POW {pows[0]}dbm')
+        gen.send(f'FREQ {freqs[0]}')
+        meter.send(f'SENS1:FREQ {freqs[0]}')
+        gen.send('OUTP ON')
+        meter.send('ABORT')
+        meter.send('INIT')
+        time.sleep(0.1)
+        meter.query('FETCH?')
+
+        index = 0
+        if mock_enabled:
+            with open('./mock_data/cal_in.txt', mode='rt', encoding='utf-8') as f:
+                mocked_raw_data = ast.literal_eval(''.join(f.readlines()))
+
+        result = []
+        for p in pows:
+            for f in freqs:
+                gen.send(f'POW {p}dbm')
+                gen.send(f'FREQ {f}')
+                meter.send(f'SENS1:FREQ {f}')
+                gen.send('OUTP ON')
+
+                meter.send('ABORT')
+                meter.send('INIT')
+
+                time.sleep(0.1)
+
+                read_pow = float(meter.query('FETCH?'))
+                diff = p - read_pow
+                delta = diff
+
+                if not mock_enabled:
+                    while abs(diff) > 0.05:
+                        gen.send(f'POW {p + diff}dbm')
+
+                        meter.send('ABORT')
+                        meter.send('INIT')
+
+                        time.sleep(0.1)
+
+                        read_pow = float(meter.query('FETCH?'))
+
+                        diff = p - read_pow
+
+                raw_point = {
+                    'f': f,
+                    'p': p,
+                    'read_pow': read_pow,
+                    'delta': delta,
+                }
+
+                if mock_enabled:
+                    raw_point = mocked_raw_data[index]
+                    index += 1
+
+                report_fn(raw_point)
+                result.append(raw_point)
+
+        gen.send('OUTP OFF')
 
         return True, 'calibrate in done'
 
