@@ -1,7 +1,8 @@
 from PyQt5 import uic
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QWidget, QHeaderView
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 
+from measuremodel import MeasureModel
 from mytools.backgroundworker import BackgroundWorker, CancelToken, TaskResult
 from instrumentcontroller import InstrumentController
 
@@ -25,17 +26,25 @@ class PulseModeWidget(QWidget):
         self._controller = controller
 
         self._task = list()
+        self._model = MeasureModel(parent=self, header=['№', 'Fвх, ГГц', 'Pвх, дБм', 'Pвх.изм, дБм', 'ΔPвх, дБм'])
 
         self._connectSignals()
+        self._initUi()
 
     def _connectSignals(self):
         self._measureFinished.connect(self.on_measure_finished, type=Qt.QueuedConnection)
+
+    def _initUi(self):
+        self._ui.tableMeasure.setModel(self._model)
+        self._ui.tableMeasure.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
 
     # worker dispatch
     def _startWorker(self, fn, cb, **kwargs):
         self._worker.runTask(fn=fn, fn_finished=cb, **kwargs)
 
     def _measure(self):
+        if not self._task:
+            return
         self._token = CancelToken()
         self._startWorker(
             fn=self._controller.measure,
@@ -43,6 +52,7 @@ class PulseModeWidget(QWidget):
             report_fn=self._measureInProgress,
             params=self._controller.secondaryParams,
             token=self._token,
+            task=self._task
         )
 
     # callbacks

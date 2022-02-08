@@ -1,7 +1,7 @@
 from itertools import cycle
 
-from PyQt5 import uic, QtWidgets
-from PyQt5.QtWidgets import QWidget, QMessageBox
+from PyQt5 import uic
+from PyQt5.QtWidgets import QWidget, QMessageBox, QHeaderView
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 
 from calmodel import CaliModel
@@ -45,9 +45,9 @@ class CalibrationWidget(QWidget):
 
     def _initUi(self):
         self._ui.tableCalibrateIn.setModel(self._cal_in_model)
-        self._ui.tableCalibrateIn.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
+        self._ui.tableCalibrateIn.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         self._ui.tableCalibrateOut.setModel(self._cal_out_model)
-        self._ui.tableCalibrateOut.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
+        self._ui.tableCalibrateOut.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
 
     # worker dispatch
     def _startWorker(self, fn, cb, **kwargs):

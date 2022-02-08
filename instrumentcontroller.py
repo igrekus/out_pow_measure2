@@ -336,9 +336,6 @@ class InstrumentController(QObject):
         self._clear()
         self._init()
 
-        for i in range(10):
-            time.sleep(0.1)
-            report_fn({'measure': i})
 
         return True
 
