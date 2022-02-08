@@ -85,3 +85,7 @@ class PulseModeWidget(QWidget):
     @pyqtSlot()
     def on_btnMeasure_clicked(self):
         self._measure()
+
+    @pyqtSlot()
+    def on_btnExport_clicked(self):
+        self._model.export()

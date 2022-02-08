@@ -1,3 +1,10 @@
+import datetime
+import os
+
+from subprocess import Popen
+
+from forgot_again.file import make_dirs
+from pandas import DataFrame
 from PyQt5.QtCore import Qt, QAbstractTableModel, QVariant
 
 
@@ -63,3 +70,18 @@ class MeasureModel(QAbstractTableModel):
 
     def is_ready(self):
         return bool(self._data)
+
+    def export(self):
+        device = 'mod'
+        path = 'xlsx'
+        make_dirs('xlsx')
+        file_name = f'./{path}/{device}-{datetime.datetime.now().isoformat().replace(":", ".")}.xlsx'
+
+        df = DataFrame(self._data)
+        df = df.drop(['idx'], axis=1)
+        df['f'] = df['f'] / 1_000_000_000
+        df.columns = ['Fвх, ГГц', 'Pвх, дБм', 'Pвх.изм, дБм', 'Pбез.пот, дБм']
+        df.to_excel(file_name, index=False)
+
+        full_path = os.path.abspath(file_name)
+        Popen(f'explorer /select,"{full_path}"')
