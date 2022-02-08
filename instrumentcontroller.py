@@ -235,12 +235,77 @@ class InstrumentController(QObject):
     def calibrateOut(self, **kwargs):
         report_fn = kwargs.pop('report_fn')
         token = kwargs.pop('token')
-        params = kwargs.pop('params')
+        params = kwargs.pop('params').params
+        cal_data = kwargs.pop('cal_data')
+
         print(f'call calibrate out with {report_fn} {token} {params}')
 
-        for i in range(10):
+        gen = self._instruments['Генератор']
+        meter = self._instruments['Изм. мощности']
+
+        avg = params['avg']
+
+        # gen.send('*RST')
+        # meter.send('*RST')
+        #
+        # meter.send(f'SENS1:AVER:COUN {avg}')
+        # meter.send('FORMat ASCII')
+        # meter.send('TRIG:SOUR INT1')
+        # meter.send('INIT:CONT ON')
+
+        max_p = max(el['p'] for el in cal_data)
+        cal_data = list(filter(lambda el: el['p'] == max_p, cal_data))
+        point = cal_data[0]
+
+        # автоматическое измерение ошибается в первой точке, измеряем пустышку
+        # почему - хз
+        gen.send(f'POW {point["p"]}dbm')
+        gen.send(f'FREQ {point["f"]}')
+        meter.send(f'SENS1:FREQ {point["f"]}')
+        gen.send('OUTP ON')
+        meter.send('ABORT')
+        meter.send('INIT')
+        time.sleep(0.1)
+        meter.query('FETCH?')
+
+        index = 0
+        if mock_enabled:
+            with open('./mock_data/cal_out.txt', mode='rt', encoding='utf-8') as f:
+                mocked_raw_data = ast.literal_eval(''.join(f.readlines()))
+
+        result = []
+        for point in cal_data:
+            p = point['p']
+            f = point['f']
+
+            gen.send(f'POW {p}dbm')
+            gen.send(f'FREQ {f}')
+            meter.send(f'SENS1:FREQ {f}')
+            gen.send('OUTP ON')
+
+            meter.send('ABORT')
+            meter.send('INIT')
+
             time.sleep(0.1)
-            report_fn({'cal_out_index': i})
+
+            read_pow = float(meter.query('FETCH?'))
+            delta = p - read_pow
+
+            point = {
+                'f': f,
+                'p': p,
+                'read_pow': read_pow,
+                'delta': delta,
+            }
+
+            if mock_enabled:
+                point = mocked_raw_data[index]
+                index += 1
+
+            report_fn(point)
+            result.append(point)
+
+        gen.send('OUTP OFF')
 
         return True, 'calibrate out done'
     # endregion

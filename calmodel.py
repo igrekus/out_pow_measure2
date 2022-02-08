@@ -58,3 +58,6 @@ class CaliModel(QAbstractTableModel):
             else:
                 QVariant()
         return QVariant()
+
+    def calData(self):
+        return list(self._data)

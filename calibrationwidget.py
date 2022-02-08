@@ -74,6 +74,7 @@ class CalibrationWidget(QWidget):
             report_fn=self._calibrateOutProgress,
             params=self._controller.secondaryParams,
             token=self._token,
+            cal_data=self._cal_in_model.calData(),
         )
 
     # callbacks
