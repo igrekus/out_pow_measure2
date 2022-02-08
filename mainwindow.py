@@ -51,8 +51,8 @@ class MainWindow(QMainWindow):
 
     def _init(self):
         self._connectionWidget.connected.connect(self.on_instrumens_connected)
-
         self._instrumentController.pointReady.connect(self.on_point_ready)
+        self._calibWidget.measureTaskReady.connect(self._pulseWidget.on_calTask_ready)
 
         self._paramInputWidget.loadConfig()
 

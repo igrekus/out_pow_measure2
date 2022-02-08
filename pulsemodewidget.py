@@ -24,6 +24,8 @@ class PulseModeWidget(QWidget):
 
         self._controller = controller
 
+        self._task = list()
+
         self._connectSignals()
 
     def _connectSignals(self):
@@ -58,6 +60,11 @@ class PulseModeWidget(QWidget):
             # QMessageBox.information(self, 'Внимание', 'Контроллер GRBL не найден, проверьте подключение.')
             return
         print('measure result', ok, msg)
+
+    @pyqtSlot(list)
+    def on_calTask_ready(self, task):
+        print('task ready', task)
+        self._task = task
 
     @pyqtSlot()
     def on_btnMeasure_clicked(self):

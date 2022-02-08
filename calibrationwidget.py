@@ -15,6 +15,7 @@ class CalibrationWidget(QWidget):
     _calibrateOutFinished = pyqtSignal(TaskResult)
     _calibrateInReport = pyqtSignal(dict)
     _calibrateOutReport = pyqtSignal(dict)
+    measureTaskReady = pyqtSignal(list)
 
     def __init__(self, parent=None, controller: InstrumentController=None):
         super().__init__(parent)
@@ -100,7 +101,7 @@ class CalibrationWidget(QWidget):
             # QMessageBox.information(self, 'Внимание', 'Контроллер GRBL не найден, проверьте подключение.')
             return
         print('cal in result', ok, msg)
-        self.task()
+        self.measureTaskReady.emit(self.task())
 
     @pyqtSlot(TaskResult)
     def on_calibrateIn_finished(self, result: TaskResult):
@@ -143,3 +144,6 @@ class CalibrationWidget(QWidget):
                 cycle([v['delta'] for v in self._cal_out_model.calData()])
             )
         ]
+
+    def is_ready(self):
+        return self._cal_in_model.is_ready() and self._cal_out_model.is_ready()

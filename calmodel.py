@@ -61,3 +61,6 @@ class CaliModel(QAbstractTableModel):
 
     def calData(self):
         return list(self._data)
+
+    def is_ready(self):
+        return bool(self._data)
