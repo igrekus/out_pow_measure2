@@ -1,6 +1,8 @@
 import ast
 import time
 
+from random import randint
+
 import numpy as np
 
 from PyQt5.QtCore import QObject, pyqtSignal
@@ -389,6 +391,77 @@ class InstrumentController(QObject):
             }
             report_fn(point)
             result.append(point)
+
+        gen.send('OUTP OFF')
+        return True
+
+    def measureContinuous(self, **kwargs):
+        report_fn = kwargs.pop('report_fn')
+        token = kwargs.pop('token')
+        params = kwargs.pop('params').params
+        print(f'call continuous measure with {report_fn} {token} {params}')
+
+        ok = self._measureContinuous(token, params, report_fn)
+        if ok:
+            return ok, 'measure success'
+        else:
+            return ok, 'measure error'
+
+    def _measureContinuous(self, token, params, report_fn):
+        self._clear()
+        self._init()
+
+        gen = self._instruments['Генератор']
+        meter = self._instruments['Изм. мощности']
+
+        avg = params['avg']
+
+        gen.send('*RST')
+        meter.send('*RST')
+
+        meter.send(f'SENS1:AVER:COUN {avg}')
+        meter.send('FORMat ASCII')
+        # meter.send('TRIG:SOUR INT1')
+        # meter.send('INIT:CONT ON')
+
+        # point = task[0]
+        # # автоматическое измерение ошибается в первой точке, измеряем пустышку
+        # # почему - хз
+        # gen.send(f'POW {point["p"]}dbm')
+        # gen.send(f'FREQ {point["f"]}')
+        # meter.send(f'SENS1:FREQ {point["f"]}')
+        # gen.send('OUTP ON')
+        # meter.send('ABORT')
+        # meter.send('INIT')
+        # time.sleep(0.1)
+        # meter.query('FETCH?')
+        f = 900_000_000
+        p = 10
+        while True:
+            if token.cancelled:
+                break
+
+            time.sleep(0.2)
+
+            gen.send(f'POW {10}dbm')
+            gen.send(f'FREQ {10}')
+            meter.send(f'SENS1:FREQ {10}')
+            gen.send('OUTP ON')
+
+            meter.send('ABORT')
+            meter.send('INIT')
+
+            time.sleep(0.1)
+
+            read_pow = float(meter.query('FETCH?'))
+            adjusted_pow = randint(1, 10)
+            point = {
+                'f': f,
+                'p': p,
+                'read_pow': read_pow,
+                'adjusted_pow': adjusted_pow,
+            }
+            report_fn(point)
 
         gen.send('OUTP OFF')
         return True

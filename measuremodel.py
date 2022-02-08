@@ -71,8 +71,8 @@ class MeasureModel(QAbstractTableModel):
     def is_ready(self):
         return bool(self._data)
 
-    def export(self):
-        device = 'mod'
+    def export(self, suffix=''):
+        device = 'mod' + f'-{suffix}' if suffix else ''
         path = 'xlsx'
         make_dirs('xlsx')
         file_name = f'./{path}/{device}-{datetime.datetime.now().isoformat().replace(":", ".")}.xlsx'
