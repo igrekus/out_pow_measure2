@@ -1,3 +1,5 @@
+from itertools import cycle
+
 from PyQt5 import uic, QtWidgets
 from PyQt5.QtWidgets import QWidget, QMessageBox
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
@@ -98,6 +100,7 @@ class CalibrationWidget(QWidget):
             # QMessageBox.information(self, 'Внимание', 'Контроллер GRBL не найден, проверьте подключение.')
             return
         print('cal in result', ok, msg)
+        self.task()
 
     @pyqtSlot(TaskResult)
     def on_calibrateIn_finished(self, result: TaskResult):
@@ -125,3 +128,18 @@ class CalibrationWidget(QWidget):
     @pyqtSlot()
     def on_btnCalibrateOut_clicked(self):
         self._calibrateOut()
+
+    def task(self):
+        return [
+            {
+                'f': i['f'],
+                'p': i['p'],
+                'delta_in': i['delta'],
+                'delta_out': o,
+            }
+            for i, o
+            in zip(
+                self._cal_in_model.calData(),
+                cycle([v['delta'] for v in self._cal_out_model.calData()])
+            )
+        ]
