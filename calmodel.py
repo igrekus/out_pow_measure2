@@ -15,9 +15,8 @@ class CaliModel(QAbstractTableModel):
 
     def update(self, point: dict):
         self.beginResetModel()
-        print(point)
         try:
-            idx = self._data[-1][0] + 1
+            idx = self._data[-1]['idx'] + 1
         except LookupError:
             idx = 1
         self._data.append({'idx': idx, **point})
