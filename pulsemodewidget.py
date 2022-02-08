@@ -8,8 +8,8 @@ from instrumentcontroller import InstrumentController
 
 
 class PulseModeWidget(QWidget):
-
     _measureFinished = pyqtSignal(TaskResult)
+    _measureReport = pyqtSignal(dict)
 
     def __init__(self, parent=None, controller: InstrumentController=None):
         super().__init__(parent)
@@ -26,13 +26,14 @@ class PulseModeWidget(QWidget):
         self._controller = controller
 
         self._task = list()
-        self._model = MeasureModel(parent=self, header=['№', 'Fвх, ГГц', 'Pвх, дБм', 'Pвх.изм, дБм', 'ΔPвх, дБм'])
+        self._model = MeasureModel(parent=self, header=['№', 'Fвх, ГГц', 'Pвх, дБм', 'Pвх.изм, дБм', 'Pбез.пот, дБм'])
 
         self._connectSignals()
         self._initUi()
 
     def _connectSignals(self):
         self._measureFinished.connect(self.on_measure_finished, type=Qt.QueuedConnection)
+        self._measureReport.connect(self.on_measureReport, type=Qt.QueuedConnection)
 
     def _initUi(self):
         self._ui.tableMeasure.setModel(self._model)
@@ -60,7 +61,7 @@ class PulseModeWidget(QWidget):
         self._measureFinished.emit(TaskResult(*result))
 
     def _measureInProgress(self, data):
-        print('measure in progress', data)
+        self._measureReport.emit(data)
 
     @pyqtSlot(TaskResult)
     def on_measure_finished(self, result):
@@ -75,6 +76,11 @@ class PulseModeWidget(QWidget):
     def on_calTask_ready(self, task):
         print('task ready', task)
         self._task = task
+
+    @pyqtSlot(dict)
+    def on_measureReport(self, data):
+        print('measure point:', data)
+        self._model.update(data)
 
     @pyqtSlot()
     def on_btnMeasure_clicked(self):

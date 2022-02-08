@@ -15,9 +15,8 @@ class MeasureModel(QAbstractTableModel):
 
     def update(self, point: dict):
         self.beginResetModel()
-        print(point)
         try:
-            idx = self._data[-1][0] + 1
+            idx = self._data[-1]['idx'] + 1
         except LookupError:
             idx = 1
         self._data.append({'idx': idx, **point})
@@ -54,7 +53,7 @@ class MeasureModel(QAbstractTableModel):
             elif col == 3:
                 return QVariant(row_data['read_pow'])
             elif col == 4:
-                return QVariant(row_data['delta'])
+                return QVariant(row_data['adjusted_pow'])
             else:
                 QVariant()
         return QVariant()

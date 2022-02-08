@@ -3,11 +3,10 @@ import time
 
 import numpy as np
 
-from PyQt5.QtCore import QObject, pyqtSlot, pyqtSignal
-from forgot_again.file import load_ast_if_exists, pprint_to_file
+from PyQt5.QtCore import QObject, pyqtSignal
+from forgot_again.file import load_ast_if_exists
 
 from instr.instrumentfactory import mock_enabled, SourceFactory, PowerMeterFactory, GeneratorFactory
-from measureresult import MeasureResult
 from secondaryparams import SecondaryParams
 
 GIGA = 1_000_000_000
@@ -323,20 +322,75 @@ class InstrumentController(QObject):
     def measure(self, **kwargs):
         report_fn = kwargs.pop('report_fn')
         token = kwargs.pop('token')
-        params = kwargs.pop('params')
-        print(f'call measure with {report_fn} {token} {params}')
+        params = kwargs.pop('params').params
+        task = kwargs.pop('task')
+        print(f'call measure with {report_fn} {token} {params} {task}')
 
-        ok = self._measure(token, params, report_fn)
+        ok = self._measure(token, params, report_fn, task)
         if ok:
             return ok, 'measure success'
         else:
             return ok, 'measure error'
 
-    def _measure(self, token, params, report_fn):
+    def _measure(self, token, params, report_fn, task):
         self._clear()
         self._init()
 
+        gen = self._instruments['Генератор']
+        meter = self._instruments['Изм. мощности']
 
+        avg = params['avg']
+
+        gen.send('*RST')
+        meter.send('*RST')
+
+        meter.send(f'SENS1:AVER:COUN {avg}')
+        meter.send('FORMat ASCII')
+        # meter.send('TRIG:SOUR INT1')
+        # meter.send('INIT:CONT ON')
+
+        point = task[0]
+        # автоматическое измерение ошибается в первой точке, измеряем пустышку
+        # почему - хз
+        gen.send(f'POW {point["p"]}dbm')
+        gen.send(f'FREQ {point["f"]}')
+        meter.send(f'SENS1:FREQ {point["f"]}')
+        gen.send('OUTP ON')
+        meter.send('ABORT')
+        meter.send('INIT')
+        time.sleep(0.1)
+        meter.query('FETCH?')
+
+        result = []
+        for row in task:
+            p = row['p']
+            f = row['f']
+            delta_in = row['delta_in']
+            delta_out = row['delta_out']
+
+            gen.send(f'POW {p + delta_in}dbm')
+            gen.send(f'FREQ {f}')
+            meter.send(f'SENS1:FREQ {f}')
+            gen.send('OUTP ON')
+
+            meter.send('ABORT')
+            meter.send('INIT')
+
+            time.sleep(0.1)
+
+            read_pow = float(meter.query('FETCH?'))
+            adjusted_pow = read_pow + delta_out
+
+            point = {
+                'f': f,
+                'p': p,
+                'read_pow': read_pow,
+                'adjusted_pow': adjusted_pow,
+            }
+            report_fn(point)
+            result.append(point)
+
+        gen.send('OUTP OFF')
         return True
 
     @property
