@@ -93,4 +93,4 @@ class ContinuousModeWidget(QWidget):
 
     @pyqtSlot()
     def on_btnExport_clicked(self):
-        self._model.export()
+        self._model.export('cont')
