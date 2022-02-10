@@ -367,7 +367,7 @@ class InstrumentController(QObject):
 
         index = 0
         if mock_enabled:
-            with open('./mock_data/cal_out_res.txt', mode='rt', encoding='utf-8') as f:
+            with open('./mock_data/measure_res.txt', mode='rt', encoding='utf-8') as f:
                 mocked_raw_data = ast.literal_eval(''.join(f.readlines()))
 
         result = []
