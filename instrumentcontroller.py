@@ -200,7 +200,6 @@ class InstrumentController(QObject):
 
                 read_pow = float(meter.query('FETCH?'))
                 diff = p - read_pow
-                delta = diff
 
                 if not mock_enabled:
                     while abs(diff) > 0.05:
@@ -219,7 +218,7 @@ class InstrumentController(QObject):
                     'f': f,
                     'p': p,
                     'read_pow': read_pow,
-                    'delta': delta,
+                    'delta': read_pow - p,
                 }
 
                 if mock_enabled:
@@ -276,7 +275,7 @@ class InstrumentController(QObject):
 
         result = []
         for point in cal_data:
-            p = point['p']
+            p = point['read_pow']
             f = point['f']
 
             gen.send(f'POW {p}dbm')
@@ -307,7 +306,7 @@ class InstrumentController(QObject):
             result.append(point)
 
         gen.send('OUTP OFF')
-
+        pprint_to_file('cal_out_res.txt', result)
         return True, 'calibrate out done'
     # endregion
 
@@ -318,7 +317,7 @@ class InstrumentController(QObject):
     def _init(self):
         self._instruments['Генератор'].send('*RST')
         self._instruments['Изм. мощности'].send('*RST')
-        self._instruments['Источник'].send('*RST')
+        # self._instruments['Источник'].send('*RST')
     # endregion
 
     def measure(self, **kwargs):
@@ -370,7 +369,7 @@ class InstrumentController(QObject):
             delta_in = row['delta_in']
             delta_out = row['delta_out']
 
-            gen.send(f'POW {p + delta_in}dbm')
+            gen.send(f'POW {p}dbm')
             gen.send(f'FREQ {f}')
             meter.send(f'SENS1:FREQ {f}')
             gen.send('OUTP ON')
