@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtCore import Qt, pyqtSlot
 
 from calibrationwidget import CalibrationWidget
-from impmodewidget import ImpModeWidget
+from pulsewidget import PulseWidget
 from formlayout.formlayout import fedit
 from instrumentcontroller import InstrumentController
 from mytools.connectionwidgetwithworker import ConnectionWidgetWithWorker
@@ -35,8 +35,8 @@ class MainWindow(QMainWindow):
         )
         # self._plotWidget = PrimaryPlotWidget(parent=self, controller=self._instrumentController)
         self._calibWidget = CalibrationWidget(parent=self, controller=self._instrumentController)
-        self._pulseWidget = ContinuousWidget(parent=self, controller=self._instrumentController)
-        self._impWidget = ImpModeWidget(parent=self, controller=self._instrumentController)
+        self._continuousWidget = ContinuousWidget(parent=self, controller=self._instrumentController)
+        self._pulseWidget = PulseWidget(parent=self, controller=self._instrumentController)
 
         # init UI
         self._ui = uic.loadUi('mainwindow.ui', self)
@@ -46,15 +46,15 @@ class MainWindow(QMainWindow):
         self._ui.layInstrs.insertWidget(1, self._paramInputWidget)
 
         self._ui.tabWidget.addTab(self._calibWidget, 'Калибровка')
-        self._ui.tabWidget.addTab(self._pulseWidget, 'Непрерывный режим')
-        self._ui.tabWidget.addTab(self._impWidget, 'Импульсный режим')
+        self._ui.tabWidget.addTab(self._continuousWidget, 'Непрерывный режим')
+        self._ui.tabWidget.addTab(self._pulseWidget, 'Импульсный режим')
 
         self._init()
 
     def _init(self):
         self._connectionWidget.connected.connect(self.on_instrumens_connected)
         self._instrumentController.pointReady.connect(self.on_point_ready)
-        self._calibWidget.measureTaskReady.connect(self._pulseWidget.on_calTask_ready)
+        self._calibWidget.measureTaskReady.connect(self._continuousWidget.on_calTask_ready)
 
         self._paramInputWidget.loadConfig()
 
