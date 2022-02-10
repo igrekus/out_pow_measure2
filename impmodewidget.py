@@ -7,7 +7,7 @@ from mytools.backgroundworker import BackgroundWorker, CancelToken, TaskResult
 from instrumentcontroller import InstrumentController
 
 
-class ContinuousModeWidget(QWidget):
+class ImpModeWidget(QWidget):
     _measureFinished = pyqtSignal(TaskResult)
     _measureReport = pyqtSignal(dict)
 
@@ -18,7 +18,7 @@ class ContinuousModeWidget(QWidget):
         self.setAttribute(Qt.WA_DeleteOnClose)
 
         # create instance variables
-        self._ui = uic.loadUi('continuousmodewidget.ui', self)
+        self._ui = uic.loadUi('impmodewidget.ui', self)
 
         self._worker = BackgroundWorker(self)
         self._token = CancelToken()
