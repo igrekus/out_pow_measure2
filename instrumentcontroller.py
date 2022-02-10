@@ -6,7 +6,7 @@ from random import randint
 import numpy as np
 
 from PyQt5.QtCore import QObject, pyqtSignal
-from forgot_again.file import load_ast_if_exists
+from forgot_again.file import load_ast_if_exists, pprint_to_file
 
 from instr.instrumentfactory import mock_enabled, SourceFactory, PowerMeterFactory, GeneratorFactory
 from secondaryparams import SecondaryParams
@@ -230,6 +230,7 @@ class InstrumentController(QObject):
 
         gen.send('OUTP OFF')
 
+        pprint_to_file('cal_in_res.txt', result)
         return True, 'calibrate in done'
 
     def calibrateOut(self, **kwargs):
@@ -391,6 +392,7 @@ class InstrumentController(QObject):
             report_fn(point)
             result.append(point)
 
+        pprint_to_file('measure_res.txt', result)
         gen.send('OUTP OFF')
         return True
 
