@@ -26,7 +26,7 @@ class InstrumentController(QObject):
         super().__init__(parent=parent)
 
         addrs = load_ast_if_exists('instr.ini', default={
-            'Генератор': 'GPIB1::18::INSTR',
+            'Генератор': 'ASRL6::INSTR',
             'Изм. мощности': 'GPIB1::3::INSTR',
             'Источник': 'GPIB1::9::INSTR',
         })
