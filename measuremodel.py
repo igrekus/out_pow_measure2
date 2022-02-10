@@ -56,11 +56,11 @@ class MeasureModel(QAbstractTableModel):
             elif col == 1:
                 return QVariant(row_data['f'] / 1_000_000_000)
             elif col == 2:
-                return QVariant(row_data['p'])
+                return QVariant(float(row_data['p']))
             elif col == 3:
                 return QVariant(row_data['read_pow'])
             elif col == 4:
-                return QVariant(row_data['adjusted_pow'])
+                return QVariant(float(row_data['adjusted_pow']))
             else:
                 QVariant()
         return QVariant()

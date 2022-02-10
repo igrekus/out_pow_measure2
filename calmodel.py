@@ -46,16 +46,14 @@ class CaliModel(QAbstractTableModel):
             row_data = self._data[row]
             if col == 0:
                 return QVariant(row_data['idx'])
-            elif col == 1:
+            if col == 1:
                 return QVariant(row_data['f'] / 1_000_000_000)
-            elif col == 2:
-                return QVariant(row_data['p'])
-            elif col == 3:
+            if col == 2:
+                return QVariant(float(row_data['p']))
+            if col == 3:
                 return QVariant(row_data['read_pow'])
-            elif col == 4:
-                return QVariant(row_data['delta'])
-            else:
-                QVariant()
+            if col == 4:
+                return QVariant(float(row_data['delta']))
         return QVariant()
 
     def calData(self):
