@@ -179,7 +179,7 @@ class InstrumentController(QObject):
         gen.send('OUTP ON')
         meter.send('ABORT')
         meter.send('INIT')
-        time.sleep(0.1)
+        time.sleep(0.2)
         meter.query('FETCH?')
 
         index = 0
@@ -198,7 +198,7 @@ class InstrumentController(QObject):
                 meter.send('ABORT')
                 meter.send('INIT')
 
-                time.sleep(0.1)
+                time.sleep(0.2)
 
                 read_pow = float(meter.query('FETCH?'))
                 diff = p - read_pow
@@ -210,7 +210,7 @@ class InstrumentController(QObject):
                         meter.send('ABORT')
                         meter.send('INIT')
 
-                        time.sleep(0.1)
+                        time.sleep(0.2)
 
                         read_pow = float(meter.query('FETCH?'))
 
@@ -268,7 +268,7 @@ class InstrumentController(QObject):
         gen.send('OUTP ON')
         meter.send('ABORT')
         meter.send('INIT')
-        time.sleep(0.1)
+        time.sleep(0.2)
         meter.query('FETCH?')
 
         index = 0
@@ -289,7 +289,7 @@ class InstrumentController(QObject):
             meter.send('ABORT')
             meter.send('INIT')
 
-            time.sleep(0.1)
+            time.sleep(0.2)
 
             read_pow = float(meter.query('FETCH?'))
             delta = p - read_pow
@@ -362,7 +362,7 @@ class InstrumentController(QObject):
         gen.send('OUTP ON')
         meter.send('ABORT')
         meter.send('INIT')
-        time.sleep(0.1)
+        time.sleep(0.2)
         meter.query('FETCH?')
 
         result = []
