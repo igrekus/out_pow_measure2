@@ -17,6 +17,8 @@ KILO = 1_000
 MILLI = 1 / 1_000
 
 
+# TODO save\load calibration data
+# TODO change table format according to reqs
 class InstrumentController(QObject):
     pointReady = pyqtSignal()
 
