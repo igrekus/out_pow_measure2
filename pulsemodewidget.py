@@ -44,6 +44,7 @@ class PulseModeWidget(QWidget):
         self._worker.runTask(fn=fn, fn_finished=cb, **kwargs)
 
     def _measure(self):
+        self._model.clear()
         if not self._task:
             return
         self._token = CancelToken()
