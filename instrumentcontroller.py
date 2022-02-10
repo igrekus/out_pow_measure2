@@ -184,7 +184,7 @@ class InstrumentController(QObject):
 
         index = 0
         if mock_enabled:
-            with open('./mock_data/cal_in.txt', mode='rt', encoding='utf-8') as f:
+            with open('./mock_data/cal_in_res.txt', mode='rt', encoding='utf-8') as f:
                 mocked_raw_data = ast.literal_eval(''.join(f.readlines()))
 
         result = []
@@ -273,7 +273,7 @@ class InstrumentController(QObject):
 
         index = 0
         if mock_enabled:
-            with open('./mock_data/cal_out.txt', mode='rt', encoding='utf-8') as f:
+            with open('./mock_data/cal_out_res.txt', mode='rt', encoding='utf-8') as f:
                 mocked_raw_data = ast.literal_eval(''.join(f.readlines()))
 
         result = []
@@ -365,6 +365,11 @@ class InstrumentController(QObject):
         time.sleep(0.2)
         meter.query('FETCH?')
 
+        index = 0
+        if mock_enabled:
+            with open('./mock_data/cal_out_res.txt', mode='rt', encoding='utf-8') as f:
+                mocked_raw_data = ast.literal_eval(''.join(f.readlines()))
+
         result = []
         for row in task:
             p = row['p']
@@ -391,6 +396,11 @@ class InstrumentController(QObject):
                 'read_pow': read_pow,
                 'adjusted_pow': adjusted_pow,
             }
+
+            if mock_enabled:
+                point = mocked_raw_data[index]
+                index += 1
+
             report_fn(point)
             result.append(point)
 
