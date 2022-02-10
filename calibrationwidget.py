@@ -94,23 +94,23 @@ class CalibrationWidget(QWidget):
         self._calibrateOutReport.emit(data)
 
     @pyqtSlot(TaskResult)
-    def on_calibrateOut_finished(self, result):
-        ok, msg = result.values
-        if not ok:
-            print(f'error during raw command: {msg}')
-            # QMessageBox.information(self, 'Внимание', 'Контроллер GRBL не найден, проверьте подключение.')
-            return
-        print('cal in result', ok, msg)
-        self.measureTaskReady.emit(self.task())
-
-    @pyqtSlot(TaskResult)
     def on_calibrateIn_finished(self, result: TaskResult):
         ok, msg = result.values
         if not ok:
             print(f'error during ask command, check logs: {msg}')
             # QMessageBox.information(self, 'Внимание', 'Ошибка выполнения запроса к GRBL, подробности в логах.')
             return
+        print('cal in result', ok, msg)
+
+    @pyqtSlot(TaskResult)
+    def on_calibrateOut_finished(self, result):
+        ok, msg = result.values
+        if not ok:
+            print(f'error during raw command: {msg}')
+            # QMessageBox.information(self, 'Внимание', 'Контроллер GRBL не найден, проверьте подключение.')
+            return
         print('cal out result', ok, msg)
+        self.measureTaskReady.emit(self.task())
 
     @pyqtSlot(dict)
     def on_calibrateInReport(self, data):
@@ -119,7 +119,7 @@ class CalibrationWidget(QWidget):
 
     @pyqtSlot(dict)
     def on_calibrateOutReport(self, data):
-        print('calibrate in point:', data)
+        print('calibrate out point:', data)
         self._cal_out_model.update(data)
 
     @pyqtSlot()
