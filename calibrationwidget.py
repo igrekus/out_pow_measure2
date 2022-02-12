@@ -65,7 +65,7 @@ class CalibrationWidget(QWidget):
         )
 
     def _calibrateOut(self):
-        res = QMessageBox.question(self, 'Внимание!', 'Подключите выходной тракт!')
+        res = QMessageBox.question(self, 'Вопрос', 'Подключен выходной тракт?')
         if res != QMessageBox.Yes:
             return
 
