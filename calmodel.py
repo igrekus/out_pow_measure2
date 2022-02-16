@@ -7,13 +7,16 @@ from instr.const import GIGA
 
 
 class CaliModel(QAbstractTableModel):
-    def __init__(self, parent=None, header=None):
+    def __init__(self, parent=None, header=None, cal_file=None):
         super().__init__(parent)
 
         self._header = header or ['#']
         self._data = defaultdict(dict)
         self._pows = list()
         self._freqs = list()
+
+        if cal_file:
+            self.loadCalData(cal_file)
 
     def clear(self):
         self.beginResetModel()
@@ -81,9 +84,13 @@ class CaliModel(QAbstractTableModel):
         pprint_to_file(file, dict(self._data.items()))
 
     def loadCalData(self, file):
-        res: dict = load_ast_if_exists(file, {})
-        self._pows = sorted(res.keys())
-        self._freqs = sorted(list(res.values())[0].keys())
+        try:
+            res: dict = load_ast_if_exists(file, defaultdict(dict))
+            self._pows = sorted(res.keys())
+            self._freqs = sorted(list(res.values())[0].keys())
+        except Exception as ex:
+            print(f'Error load calibration file {file}: {ex}, skip load')
+            return
 
         self.beginResetModel()
         self._header = ['Pвх, дБм'] + [f'Fвх={v}, ГГц' for v in self._freqs]

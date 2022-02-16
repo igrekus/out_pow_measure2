@@ -31,8 +31,8 @@ class CalibrationWidget(QWidget):
 
         self._controller = controller
 
-        self._cal_in_model = CaliModel(parent=self)
-        self._cal_out_model = CaliModel(parent=self)
+        self._cal_in_model = CaliModel(parent=self, cal_file='default_cal_in.txt')
+        self._cal_out_model = CaliModel(parent=self, cal_file='default_cal_out.txt')
 
         self._connectSignals()
         self._initUi()
@@ -175,3 +175,9 @@ class CalibrationWidget(QWidget):
 
     def is_ready(self):
         return self._cal_in_model.is_ready() and self._cal_out_model.is_ready()
+
+    def saveCalData(self):
+        if self._cal_in_model.is_ready():
+            self._cal_in_model.saveCalData('default_cal_in.txt')
+        if self._cal_out_model.is_ready():
+            self._cal_out_model.saveCalData('default_cal_out.txt')

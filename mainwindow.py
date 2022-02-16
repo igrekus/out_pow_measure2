@@ -114,6 +114,7 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, _):
         self._paramInputWidget.saveConfig()
+        self._calibWidget.saveCalData()
         # self._paramInputWidget.cancel()  # TODO ad cancellation on close
         # while self._paramInputWidget._threads.activeThreadCount() > 0:
         #     time.sleep(0.1)
