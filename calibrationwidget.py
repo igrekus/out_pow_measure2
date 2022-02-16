@@ -1,7 +1,7 @@
 from itertools import cycle
 
 from PyQt5 import uic
-from PyQt5.QtWidgets import QWidget, QMessageBox, QHeaderView
+from PyQt5.QtWidgets import QWidget, QMessageBox, QHeaderView, QFileDialog
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 
 from calmodel import CaliModel
@@ -129,6 +129,34 @@ class CalibrationWidget(QWidget):
     @pyqtSlot()
     def on_btnCalibrateOut_clicked(self):
         self._calibrateOut()
+
+    @pyqtSlot()
+    def on_btnLoadIn_clicked(self):
+        file, _ = QFileDialog.getOpenFileName(self, 'Загрузить калибровку по входу', '.', 'Text file (*.txt)')
+        if not file:
+            return
+        self._cal_in_model.loadCalData(file)
+
+    @pyqtSlot()
+    def on_btnSaveIn_clicked(self):
+        file, _ = QFileDialog.getSaveFileName(self, 'Сохранить калибровку по входу', '.', 'Text file (*.txt)')
+        if not file:
+            return
+        self._cal_in_model.saveCalData(file)
+
+    @pyqtSlot()
+    def on_btnLoadOut_clicked(self):
+        file, _ = QFileDialog.getOpenFileName(self, 'Загрузить калибровку по выходу', '.', 'Text file (*.txt)')
+        if not file:
+            return
+        self._cal_out_model.loadCalData(file)
+
+    @pyqtSlot()
+    def on_btnSaveOut_clicked(self):
+        file, _ = QFileDialog.getSaveFileName(self, 'Сохранить калибровку по выходу', '.', 'Text file (*.txt)')
+        if not file:
+            return
+        self._cal_out_model.saveCalData(file)
 
     def task(self):
         return [

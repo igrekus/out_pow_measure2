@@ -1,6 +1,7 @@
 from collections import defaultdict
 
 from PyQt5.QtCore import Qt, QAbstractTableModel, QVariant
+from forgot_again.file import pprint_to_file, load_ast_if_exists
 
 from instr.const import GIGA
 
@@ -31,6 +32,7 @@ class CaliModel(QAbstractTableModel):
         self._data[p][f] = (point['read_pow'], point['delta'])
 
         self._header = ['Pвх, дБм'] + [f'Fвх={v}, ГГц' for v in self._freqs]
+
         self.endResetModel()
 
     def headerData(self, section, orientation, role=None):
@@ -74,3 +76,16 @@ class CaliModel(QAbstractTableModel):
 
     def is_ready(self):
         return bool(self._data)
+
+    def saveCalData(self, file):
+        pprint_to_file(file, dict(self._data.items()))
+
+    def loadCalData(self, file):
+        res: dict = load_ast_if_exists(file, {})
+        self._pows = sorted(res.keys())
+        self._freqs = sorted(list(res.values())[0].keys())
+
+        self.beginResetModel()
+        self._header = ['Pвх, дБм'] + [f'Fвх={v}, ГГц' for v in self._freqs]
+        self._data = res
+        self.endResetModel()
