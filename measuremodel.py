@@ -4,6 +4,7 @@ from collections import defaultdict
 
 from subprocess import Popen
 
+import pandas as pd
 from forgot_again.file import make_dirs
 from pandas import DataFrame
 from PyQt5.QtCore import Qt, QAbstractTableModel, QVariant
@@ -77,10 +78,11 @@ class MeasureModel(QAbstractTableModel):
         make_dirs('xlsx')
         file_name = f'./{path}/{device}-{datetime.datetime.now().isoformat().replace(":", ".")}.xlsx'
 
-        df = DataFrame(self._data)
-        df = df.drop(['idx'], axis=1)
-        df['f'] = df['f'] / 1_000_000_000
-        df.columns = ['Fвх, ГГц', 'Pвх, дБм', 'Pвх.изм, дБм', 'Pбез.пот, дБм']
+        pows = sorted(self._data.keys())
+        vals = [{f'Fвх={k}, ГГц': v[1] for k, v in row.items()} for row in self._data.values()]
+        vals = [{'Pвх, дБм': p, **v} for p, v in zip(pows, vals)]
+
+        df = DataFrame(vals)
         df.to_excel(file_name, index=False)
 
         full_path = os.path.abspath(file_name)
