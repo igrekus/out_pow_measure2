@@ -32,7 +32,7 @@ class CalibrationWidget(QWidget):
         self._controller = controller
 
         self._cal_in_model = CaliModel(parent=self)
-        self._cal_out_model = CaliModel(parent=self, header=['№', 'Fвх, ГГц', 'Pвх, дБм', 'Pвх.изм, дБм', 'ΔPвх, дБм'])
+        self._cal_out_model = CaliModel(parent=self)
 
         self._connectSignals()
         self._initUi()

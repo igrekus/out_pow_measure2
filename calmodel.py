@@ -33,13 +33,6 @@ class CaliModel(QAbstractTableModel):
         self._header = ['Pвх, дБм'] + [f'Fвх={v}, ГГц' for v in self._freqs]
         self.endResetModel()
 
-    def _collect_freqs(self):
-        try:
-            row = list(self._data.values())[0]
-            return sorted(row.keys())
-        except LookupError:
-            return []
-
     def headerData(self, section, orientation, role=None):
         if orientation == Qt.Horizontal:
             if role == Qt.DisplayRole:
