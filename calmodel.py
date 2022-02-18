@@ -71,7 +71,7 @@ class CaliModel(QAbstractTableModel):
             for f in self._freqs:
                 out.append({
                     'p': p,
-                    'f': f,
+                    'f': f * GIGA,
                     'read_pow': self._data[p][f][0],
                     'delta': self._data[p][f][1],
                 })
