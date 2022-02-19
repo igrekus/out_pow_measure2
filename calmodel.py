@@ -86,7 +86,8 @@ class CaliModel(QAbstractTableModel):
     def loadCalData(self, file):
         try:
             res: dict = load_ast_if_exists(file, defaultdict(dict))
-            res = defaultdict(**res)
+            tmp = defaultdict(dict)
+            tmp.update({**res})
             self._pows = sorted(res.keys())
             self._freqs = sorted(list(res.values())[0].keys())
         except Exception as ex:
@@ -95,5 +96,5 @@ class CaliModel(QAbstractTableModel):
 
         self.beginResetModel()
         self._header = ['Pвх, дБм'] + [f'Fвх={v}, ГГц' for v in self._freqs]
-        self._data = res
+        self._data = tmp
         self.endResetModel()
