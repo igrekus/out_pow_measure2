@@ -83,32 +83,32 @@ class InstrumentController(QObject):
             ],
             'sep_2': ['', {'value': None}],
             'x_start': [
-                'Xstart=',
-                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 10.0, 'suffix': ' ?'}
+                'X start=',
+                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 10.0, 'suffix': ' дБм'}
             ],
             'x_scale': [
-                'Xscale=',
-                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 10.0, 'suffix': ' ?'}
+                'X scale=',
+                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 10.0, 'suffix': ' дБм'}
             ],
-            'y_start': [
-                'Ystart=',
-                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 10.0, 'suffix': ' ?'}
+            'y_mazx': [
+                'Y max=',
+                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 10.0, 'suffix': ' дБм'}
             ],
             'y_scale': [
-                'Yscale=',
-                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 10.0, 'suffix': ' ?'}
+                'Y scale=',
+                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 10.0, 'suffix': ' дБм'}
             ],
             'trig_level': [
                 'Ур. сраб.=',
-                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 10.0, 'suffix': ' ?'}
+                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 10.0, 'suffix': ' дБм'}
             ],
             'mark_1': [
                 'Маркер 1=',
-                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 10.0, 'suffix': ' ?'}
+                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 10.0, 'suffix': ' ГГц'}
             ],
             'mark_2': [
                 'Маркер 2=',
-                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 10.0, 'suffix': ' ?'}
+                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 10.0, 'suffix': ' ГГц'}
             ],
         }, file_name='params.ini')
 
