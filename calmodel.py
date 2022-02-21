@@ -86,6 +86,7 @@ class CaliModel(QAbstractTableModel):
     def loadCalData(self, file):
         try:
             res: dict = load_ast_if_exists(file, defaultdict(dict))
+            res = defaultdict(**res)
             self._pows = sorted(res.keys())
             self._freqs = sorted(list(res.values())[0].keys())
         except Exception as ex:
