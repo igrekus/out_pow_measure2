@@ -202,6 +202,7 @@ class InstrumentController(QObject):
 
                 read_pow = float(meter.query('FETCH?'))
                 diff = p - read_pow
+                prev = diff
 
                 if not mock_enabled:
                     while abs(diff) > 0.05:
@@ -220,7 +221,7 @@ class InstrumentController(QObject):
                     'f': f,
                     'p': p,
                     'read_pow': read_pow,
-                    'delta': read_pow - p,
+                    'delta': prev,
                 }
 
                 if mock_enabled:
@@ -280,8 +281,9 @@ class InstrumentController(QObject):
         for point in cal_data:
             p = point['read_pow']
             f = point['f']
+            delta_in = point['delta']
 
-            gen.send(f'POW {p}dbm')
+            gen.send(f'POW {p + delta_in}dbm')
             gen.send(f'FREQ {f}')
             meter.send(f'SENS1:FREQ {f}')
             gen.send('OUTP ON')
@@ -377,7 +379,7 @@ class InstrumentController(QObject):
             delta_in = row['delta_in']
             delta_out = row['delta_out']
 
-            gen.send(f'POW {p}dbm')
+            gen.send(f'POW {p + delta_in}dbm')
             gen.send(f'FREQ {f}')
             meter.send(f'SENS1:FREQ {f}')
             gen.send('OUTP ON')
