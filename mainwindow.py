@@ -49,16 +49,21 @@ class MainWindow(QMainWindow):
         self._ui.tabWidget.addTab(self._continuousWidget, 'Непрерывный режим')
         self._ui.tabWidget.addTab(self._pulseWidget, 'Импульсный режим')
 
+        self._connectSignals()
         self._init()
 
     def _init(self):
+        self._paramInputWidget.loadConfig()
+        self._ui.tabWidget.setEnabled(False)
+
+    def _connectSignals(self):
         self._connectionWidget.connected.connect(self.on_instrumens_connected)
         self._instrumentController.pointReady.connect(self.on_point_ready)
         self._calibWidget.measureTaskReady.connect(self._continuousWidget.on_calTask_ready)
 
-        self._paramInputWidget.loadConfig()
-
-        self._ui.tabWidget.setEnabled(False)
+        # TODO fkn hack
+        if self._calibWidget._cal_in_model.is_ready() and self._calibWidget._cal_out_model.is_ready():
+            self._calibWidget.measureTaskReady.emit(self._calibWidget.task())
 
     def _saveScreenshot(self):
         screen = QGuiApplication.primaryScreen()
