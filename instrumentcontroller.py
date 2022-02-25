@@ -93,7 +93,7 @@ class InstrumentController(QObject):
                 'X scale=',
                 {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 10.0, 'suffix': ' дБм'}
             ],
-            'y_mazx': [
+            'y_max': [
                 'Y max=',
                 {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 10.0, 'suffix': ' дБм'}
             ],
