@@ -2,7 +2,7 @@ from PyQt5 import uic
 from PyQt5.QtWidgets import QWidget, QHeaderView
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 
-from measuremodel import MeasureModel
+from continuousmeasuremodel import ContinuousMeasureModel
 from mytools.backgroundworker import BackgroundWorker, CancelToken, TaskResult
 from instrumentcontroller import InstrumentController
 
@@ -26,7 +26,7 @@ class ContinuousWidget(QWidget):
         self._controller = controller
 
         self._task = list()
-        self._model = MeasureModel(parent=self)
+        self._model = ContinuousMeasureModel(parent=self)
 
         self._connectSignals()
         self._initUi()

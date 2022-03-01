@@ -2,9 +2,9 @@ from PyQt5 import uic
 from PyQt5.QtWidgets import QWidget, QHeaderView
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 
-from measuremodel import MeasureModel
 from mytools.backgroundworker import BackgroundWorker, CancelToken, TaskResult
 from instrumentcontroller import InstrumentController
+from pulsemeasuremodel import PulseMeasureModel
 
 
 class PulseWidget(QWidget):
@@ -26,7 +26,7 @@ class PulseWidget(QWidget):
         self._controller = controller
 
         self._task = list()
-        self._model = MeasureModel(parent=self)
+        self._model = PulseMeasureModel(parent=self)
 
         self._connectSignals()
         self._initUi()
@@ -47,11 +47,12 @@ class PulseWidget(QWidget):
         self._model.clear()
         self._token = CancelToken()
         self._startWorker(
-            fn=self._controller.measureContinuous,
+            fn=self._controller.measurePulse,
             cb=self._measureFinishedCallback,
             report_fn=self._measureInProgress,
             params=self._controller.secondaryParams,
             token=self._token,
+            task=self._task,
         )
 
     def _stop(self):
@@ -84,7 +85,7 @@ class PulseWidget(QWidget):
         self._model.update(data)
 
     @pyqtSlot()
-    def on_btnStart_clicked(self):
+    def on_btnMeasure_clicked(self):
         self._start()
 
     @pyqtSlot()

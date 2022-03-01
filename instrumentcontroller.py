@@ -406,14 +406,14 @@ class InstrumentController(QObject):
                 point = mocked_raw_data[index]
                 index += 1
 
-            report_fn(point)
             result.append(point)
+            report_fn(point)
 
-        pprint_to_file('measure_res.txt', result)
+        pprint_to_file('out_continuous.txt', result)
         gen.send('OUTP OFF')
         return True
 
-    def measureContinuous(self, **kwargs):
+    def measurePulse(self, **kwargs):
         report_fn = kwargs.pop('report_fn')
         token = kwargs.pop('token')
         params = kwargs.pop('params').params
@@ -425,7 +425,7 @@ class InstrumentController(QObject):
         else:
             return ok, 'measure error'
 
-    def _measureContinuous(self, token, params, report_fn):
+    def _measurePulse(self, token, params, report_fn, task):
         self._clear()
         self._init()
 

@@ -12,7 +12,7 @@ from PyQt5.QtCore import Qt, QAbstractTableModel, QVariant
 from instr.const import GIGA
 
 
-class MeasureModel(QAbstractTableModel):
+class ContinuousMeasureModel(QAbstractTableModel):
     def __init__(self, parent=None, header=None):
         super().__init__(parent)
 
