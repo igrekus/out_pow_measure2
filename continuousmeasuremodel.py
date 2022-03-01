@@ -29,7 +29,7 @@ class ContinuousMeasureModel(QAbstractTableModel):
         self.endResetModel()
 
     def update(self, point: dict):
-        # a = {'f': 2700000000, 'p': 14.9917657, 'read_pow': 12.7655025, 'adjusted_pow': 15.0660151}
+        # TODO if starts failing, use 'p_ref' as in pulse measurement
         self.beginResetModel()
 
         p = round(point['p'])

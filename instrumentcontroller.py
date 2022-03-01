@@ -381,6 +381,7 @@ class InstrumentController(QObject):
             f = row['f']
             delta_in = row['delta_in']
             delta_out = row['delta_out']
+            p_ref = row['p_ref']
 
             gen.send(f'POW {p + delta_in}dbm')
             gen.send(f'FREQ {f}')
@@ -400,6 +401,7 @@ class InstrumentController(QObject):
                 'p': p,
                 'read_pow': read_pow,
                 'adjusted_pow': adjusted_pow,
+                'p_ref': p_ref,
             }
 
             if mock_enabled:

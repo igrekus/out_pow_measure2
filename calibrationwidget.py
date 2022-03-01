@@ -163,6 +163,7 @@ class CalibrationWidget(QWidget):
             {
                 'f': i['f'],
                 'p': i['read_pow'],
+                'p_ref': i['p'],
                 'delta_in': i['delta'],
                 'delta_out': o,
             }
