@@ -26,7 +26,7 @@ class ContinuousWidget(QWidget):
         self._controller = controller
 
         self._task = list()
-        self._model = MeasureModel(parent=self, header=['№', 'Fвх, ГГц', 'Pвх, дБм', 'Pвх.изм, дБм', 'Pбез.пот, дБм'])
+        self._model = MeasureModel(parent=self)
 
         self._connectSignals()
         self._initUi()
