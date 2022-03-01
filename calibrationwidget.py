@@ -31,8 +31,8 @@ class CalibrationWidget(QWidget):
 
         self._controller = controller
 
-        self._cal_in_model = CaliModel(parent=self, cal_file='default_cal_in.txt')
-        self._cal_out_model = CaliModel(parent=self, cal_file='default_cal_out.txt')
+        self._cal_in_model = CaliModel(parent=self, cal_file='default_cal_in.txt', display_fn=lambda val: val[0] + val[1])
+        self._cal_out_model = CaliModel(parent=self, cal_file='default_cal_out.txt', display_fn=lambda val: val[1])
 
         self._connectSignals()
         self._initUi()

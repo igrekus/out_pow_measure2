@@ -7,13 +7,14 @@ from instr.const import GIGA
 
 
 class CaliModel(QAbstractTableModel):
-    def __init__(self, parent=None, header=None, cal_file=None):
+    def __init__(self, parent=None, header=None, cal_file=None, display_fn=None):
         super().__init__(parent)
 
         self._header = header or ['#']
         self._data = defaultdict(dict)
         self._pows = list()
         self._freqs = list()
+        self._display_fn = display_fn or (lambda val: val[0])
 
         if cal_file:
             self.loadCalData(cal_file)
@@ -62,7 +63,7 @@ class CaliModel(QAbstractTableModel):
             p = self._pows[row]
             if col == 0:
                 return QVariant(p)
-            return QVariant(self._data[p].get(self._freqs[col - 1], (0, 0))[0])
+            return QVariant(self._display_fn(self._data[p].get(self._freqs[col - 1], (0, 0))))
         return QVariant()
 
     def calData(self):
