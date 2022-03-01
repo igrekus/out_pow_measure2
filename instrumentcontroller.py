@@ -1,8 +1,6 @@
 import ast
 import time
 
-from random import randint
-
 import numpy as np
 
 from PyQt5.QtCore import QObject, pyqtSignal
