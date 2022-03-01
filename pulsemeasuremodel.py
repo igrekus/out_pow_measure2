@@ -33,10 +33,11 @@ class PulseMeasureModel(QAbstractTableModel):
         self.beginResetModel()
 
         p = round(point['p'])
+        p_ref = point['p_ref']
         f = round(point['f'] / GIGA, 3)
-        self._pows = sorted(set(self._pows + [p]))
+        self._pows = sorted(set(self._pows + [p_ref]))
         self._freqs = sorted(set(self._freqs + [f]))
-        self._data[p][f] = (point['read_pow'], point['adjusted_pow'])
+        self._data[p_ref][f] = (point['read_pow'], point['adjusted_pow'])
 
         self._header = ['Pвх, дБм'] + [f'Fвх={v}, ГГц' for v in self._freqs]
         self.endResetModel()

@@ -417,9 +417,10 @@ class InstrumentController(QObject):
         report_fn = kwargs.pop('report_fn')
         token = kwargs.pop('token')
         params = kwargs.pop('params').params
-        print(f'call continuous measure with {report_fn} {token} {params}')
+        task = kwargs.pop('task')
+        print(f'call continuous measure with {report_fn} {token} {params} {task}')
 
-        ok = self._measureContinuous(token, params, report_fn)
+        ok = self._measurePulse(token, params, report_fn, task)
         if ok:
             return ok, 'measure success'
         else:
@@ -431,58 +432,92 @@ class InstrumentController(QObject):
 
         gen = self._instruments['Генератор']
         meter = self._instruments['Изм. мощности']
+        # src = self._instruments['Источник']
 
         avg = params['avg']
+        x_start = params['x_start']
+        x_scale = params['x_scale']
+        y_max = params['y_max']
+        y_scale = params['y_scale']
+        trig_level = params['trig_level']
+        mark_1 = params['mark_1']
+        mark_2 = params['mark_2']
 
         gen.send('*RST')
         meter.send('*RST')
 
         meter.send(f'SENS1:AVER:COUN {avg}')
         meter.send('FORMat ASCII')
-        # meter.send('TRIG:SOUR INT1')
-        # meter.send('INIT:CONT ON')
 
-        # point = task[0]
-        # # автоматическое измерение ошибается в первой точке, измеряем пустышку
-        # # почему - хз
-        # gen.send(f'POW {point["p"]}dbm')
-        # gen.send(f'FREQ {point["f"]}')
-        # meter.send(f'SENS1:FREQ {point["f"]}')
-        # gen.send('OUTP ON')
-        # meter.send('ABORT')
-        # meter.send('INIT')
-        # time.sleep(0.1)
-        # meter.query('FETCH?')
-        f = 900_000_000
-        p = 10
-        while True:
-            if token.cancelled:
-                break
+        meter.send('INIT:CONT ON')
+        # meter.send('TRAC:STAT ON')
+        meter.send('TRIG:SOUR INT1')
+
+        meter.send('DISP:WIND1:TRAC:FEED "SENS1"')
+        meter.send('DISP:WIND1:FORM TRAC')
+        meter.send('DISP:SCR:FORM FSCR')
+
+        meter.send(f'SENS1:TRAC:OFFS:TIME {x_start}')
+        meter.send(f'SENS1:TRAC:X:SCAL:PDIV {x_scale}')
+        meter.send(f'SENS1:TRAC:LIM:UPP {y_max}')
+        meter.send(f'SENS1:TRAC:Y:SCAL:PDIV {y_scale}')
+
+        meter.send(f'TRIG:SEQ:LEV {trig_level}')
+
+        meter.send(f'SENS1:SWE1:OFFS:TIME {mark_1}')
+        meter.send(f'SENS1:SWE1:TIME {mark_2}')
+
+        # автоматическое измерение ошибается в первой точке, измеряем пустышку
+        # почему - хз
+        f1 = task[0]['f']
+        p1 = task[0]['p']
+        gen.send(f'POW {p1}dbm')
+        gen.send(f'FREQ {f1}')
+        meter.send(f'SENS1:FREQ {f1}')
+        gen.send('OUTP ON')
+        time.sleep(0.1)
+        meter.query('FETCH?')
+
+        index = 0
+        if mock_enabled:
+            with open('./mock_data/pulse1.txt', mode='rt', encoding='utf-8') as f:
+                mocked_raw_data = ast.literal_eval(''.join(f.readlines()))
+
+        result = []
+        for t in task:
+            f = t['f']
+            p = t['p']
+            delta_in = t['delta_in']
+            delta_out = t['delta_out']
+            p_ref = t['p_ref']
+
+            gen.send(f'POW {p + delta_in}dbm')
+            gen.send(f'FREQ {f}')
+            meter.send(f'SENS1:FREQ {f}')
+            gen.send('OUTP ON')
 
             time.sleep(0.2)
 
-            gen.send(f'POW {10}dbm')
-            gen.send(f'FREQ {10}')
-            meter.send(f'SENS1:FREQ {10}')
-            gen.send('OUTP ON')
+            read_pow = float(meter.query('FETCH?').strip())
+            adjusted_pow = read_pow + delta_out
 
-            meter.send('ABORT')
-            meter.send('INIT')
-
-            time.sleep(0.1)
-
-            read_pow = float(meter.query('FETCH?'))
-            adjusted_pow = randint(1, 10)
             point = {
                 'f': f,
-                'p': p,
+                'p': p_ref,
                 'read_pow': read_pow,
                 'adjusted_pow': adjusted_pow,
             }
+
+            if mock_enabled:
+                point = mocked_raw_data[index]
+                index += 1
+
+            result.append(point)
             report_fn(point)
 
         gen.send('OUTP OFF')
-        return True
+
+        pprint_to_file('out_pulse.txt', result)
 
     @property
     def status(self):
