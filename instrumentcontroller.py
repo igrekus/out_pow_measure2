@@ -306,7 +306,7 @@ class InstrumentController(QObject):
             read_pow = float(meter.query('FETCH?'))
             delta = p - read_pow
 
-            point = {
+            raw_point = {
                 'f': f,
                 'p': p,
                 'read_pow': read_pow,
@@ -314,11 +314,12 @@ class InstrumentController(QObject):
             }
 
             if mock_enabled:
-                point = mocked_raw_data[index]
+                raw_point = mocked_raw_data[index]
                 index += 1
 
-            report_fn(point)
-            result.append(point)
+            print(raw_point)
+            report_fn(raw_point)
+            result.append(raw_point)
 
         gen.send('OUTP OFF')
         pprint_to_file('cal_out_res.txt', result)
@@ -406,7 +407,7 @@ class InstrumentController(QObject):
             read_pow = float(meter.query('FETCH?'))
             adjusted_pow = read_pow + delta_out
 
-            point = {
+            raw_point = {
                 'f': f,
                 'p': p,
                 'read_pow': read_pow,
@@ -415,11 +416,11 @@ class InstrumentController(QObject):
             }
 
             if mock_enabled:
-                point = mocked_raw_data[index]
+                raw_point = mocked_raw_data[index]
                 index += 1
 
-            result.append(point)
-            report_fn(point)
+            result.append(raw_point)
+            report_fn(raw_point)
 
         pprint_to_file('out_continuous.txt', result)
         gen.send('OUTP OFF')
