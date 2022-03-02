@@ -85,31 +85,31 @@ class InstrumentController(QObject):
             'sep_2': ['', {'value': None}],
             'x_start': [
                 'X start=',
-                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 10.0, 'suffix': ' дБм'}
+                {'start': -1_000_000.0, 'end': 1_000_000.0, 'step': 1.0, 'value': 100.0, 'decimals': 3, 'suffix': ' мкс'}
             ],
             'x_scale': [
                 'X scale=',
-                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 10.0, 'suffix': ' дБм'}
+                {'start': 0.0, 'end': 1_000_000.0, 'step': 1.0, 'value': 100.0, 'decimals': 3, 'suffix': ' мкс'}
             ],
             'y_max': [
                 'Y max=',
-                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 10.0, 'suffix': ' дБм'}
+                {'start': -70.0, 'end': 70.0, 'step': 1.0, 'value': 0.0, 'suffix': ' дБм'}
             ],
             'y_scale': [
                 'Y scale=',
-                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 10.0, 'suffix': ' дБм'}
+                {'start': 0.0, 'end': 20.0, 'step': 1.0, 'value': 1.0, 'suffix': ' дБм'}
             ],
             'trig_level': [
                 'Ур. сраб.=',
-                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 10.0, 'suffix': ' дБм'}
+                {'start': -70.0, 'end': 70.0, 'step': 1.0, 'value': -10.0, 'suffix': ' дБм'}
             ],
             'mark_1': [
                 'Маркер 1=',
-                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 10.0, 'suffix': ' ГГц'}
+                {'start': 0.0, 'end': 1_000_000.0, 'step': 1.0, 'value': 100.0, 'suffix': ' мкс'}
             ],
             'mark_2': [
                 'Маркер 2=',
-                {'start': 0.0, 'end': 30.0, 'step': 0.5, 'value': 10.0, 'suffix': ' ГГц'}
+                {'start': 0.0, 'end': 1_000_000.0, 'step': 1.0, 'value': 700.0, 'suffix': ' мкс'}
             ],
         }, file_name='params.ini')
 
