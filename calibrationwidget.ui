@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>690</width>
+    <width>856</width>
     <height>461</height>
    </rect>
   </property>
@@ -28,6 +28,13 @@
         <widget class="QPushButton" name="btnCalibrateIn">
          <property name="text">
           <string>Калиб. вход</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="btnCalibrateInCancel">
+         <property name="text">
+          <string>Отменить</string>
          </property>
         </widget>
        </item>

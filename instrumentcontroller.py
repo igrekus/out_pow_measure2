@@ -188,6 +188,9 @@ class InstrumentController(QObject):
         result = []
         for p in pows:
             for f in freqs:
+                if token.cancelled:
+                    return False, 'measure cancel'
+
                 gen.send(f'POW {p}dbm')
                 gen.send(f'FREQ {f}')
                 meter.send(f'SENS1:FREQ {f}')
@@ -204,7 +207,13 @@ class InstrumentController(QObject):
 
                 if not mock_enabled:
                     while abs(diff) > 0.05:
-                        gen.send(f'POW {p + diff}dbm')
+
+                        if token.cancelled:
+                            return False, 'measure cancel'
+
+                        new_pow = p + diff
+
+                        gen.send(f'POW {new_pow}dbm')
 
                         meter.send('ABORT')
                         meter.send('INIT')
@@ -277,6 +286,9 @@ class InstrumentController(QObject):
 
         result = []
         for point in cal_data:
+            if token.cancelled:
+                return False, 'measure cancel'
+
             p = point['read_pow']
             f = point['f']
             delta_in = point['delta']
@@ -372,6 +384,9 @@ class InstrumentController(QObject):
 
         result = []
         for row in task:
+            if token.cancelled:
+                return False, 'measure cancel'
+
             p = row['p']
             f = row['f']
             delta_in = row['delta_in']
@@ -482,6 +497,9 @@ class InstrumentController(QObject):
 
         result = []
         for t in task:
+            if token.cancelled:
+                return False, 'measure cancel'
+
             f = t['f']
             p = t['p']
             delta_in = t['delta_in']

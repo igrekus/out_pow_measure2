@@ -127,6 +127,10 @@ class CalibrationWidget(QWidget):
         self._calibrateIn()
 
     @pyqtSlot()
+    def on_btnCalibrateInCancel_clicked(self):
+        self._token.cancelled = True
+
+    @pyqtSlot()
     def on_btnCalibrateOut_clicked(self):
         self._calibrateOut()
 
