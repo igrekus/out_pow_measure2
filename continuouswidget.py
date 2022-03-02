@@ -75,7 +75,6 @@ class ContinuousWidget(QWidget):
 
     @pyqtSlot(list)
     def on_calTask_ready(self, task):
-        print('task ready', task)
         self._task = task
 
     @pyqtSlot(dict)
