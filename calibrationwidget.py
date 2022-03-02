@@ -97,7 +97,7 @@ class CalibrationWidget(QWidget):
     def on_calibrateIn_finished(self, result: TaskResult):
         ok, msg = result.values
         if not ok:
-            print(f'error during ask command, check logs: {msg}')
+            print(f'error during calibrate in: {msg}')
             # QMessageBox.information(self, 'Внимание', 'Ошибка выполнения запроса к GRBL, подробности в логах.')
             return
         print('cal in result', ok, msg)
@@ -106,7 +106,7 @@ class CalibrationWidget(QWidget):
     def on_calibrateOut_finished(self, result):
         ok, msg = result.values
         if not ok:
-            print(f'error during raw command: {msg}')
+            print(f'error during calibrate out: {msg}')
             # QMessageBox.information(self, 'Внимание', 'Контроллер GRBL не найден, проверьте подключение.')
             return
         print('cal out result', ok, msg)
