@@ -113,9 +113,6 @@ class InstrumentController(QObject):
             ],
         }, file_name='params.ini')
 
-        self._cal_in = load_ast_if_exists('cal_in.ini', default={})
-        self._cal_out = load_ast_if_exists('cal_out.ini', default={})
-
         self._instruments = dict()
 
     def __str__(self):
