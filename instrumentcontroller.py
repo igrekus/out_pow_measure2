@@ -201,7 +201,7 @@ class InstrumentController(QObject):
 
                 time.sleep(0.2)
 
-                read_pow = float(meter.query('FETCH?'))
+                read_pow = float(meter.query('FETCH?').strip())
                 diff = p - read_pow
                 prev = diff
 
@@ -220,7 +220,7 @@ class InstrumentController(QObject):
 
                         time.sleep(0.2)
 
-                        read_pow = float(meter.query('FETCH?'))
+                        read_pow = float(meter.query('FETCH?').strip())
 
                         diff = p - read_pow
 
@@ -303,7 +303,7 @@ class InstrumentController(QObject):
 
             time.sleep(0.2)
 
-            read_pow = float(meter.query('FETCH?'))
+            read_pow = float(meter.query('FETCH?').strip())
             delta = p - read_pow
 
             raw_point = {
@@ -404,7 +404,7 @@ class InstrumentController(QObject):
 
             time.sleep(0.1)
 
-            read_pow = float(meter.query('FETCH?'))
+            read_pow = float(meter.query('FETCH?').strip())
             adjusted_pow = read_pow + delta_out
 
             raw_point = {
