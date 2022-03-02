@@ -60,7 +60,7 @@ class CalibrationWidget(QWidget):
             fn=self._controller.calibrateIn,
             cb=self._calibrateInFinishedCallback,
             report_fn=self._calibrateInProgress,
-            params=self._controller.secondaryParams,
+            params=self._controller.secondaryParams.params,
             token=self._token,
         )
 
@@ -75,7 +75,7 @@ class CalibrationWidget(QWidget):
             fn=self._controller.calibrateOut,
             cb=self._calibrateOutFinishedCallback,
             report_fn=self._calibrateOutProgress,
-            params=self._controller.secondaryParams,
+            params=self._controller.secondaryParams.params,
             token=self._token,
             cal_data=self._cal_in_model.calData(),
         )

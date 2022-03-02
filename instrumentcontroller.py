@@ -144,7 +144,7 @@ class InstrumentController(QObject):
     def calibrateIn(self, **kwargs):
         report_fn = kwargs.pop('report_fn')
         token = kwargs.pop('token')
-        params = kwargs.pop('params').params
+        params = kwargs.pop('params')
         print(f'call calibrate in with {report_fn} {token} {params}')
 
         gen = self._instruments['Генератор']
@@ -246,7 +246,7 @@ class InstrumentController(QObject):
     def calibrateOut(self, **kwargs):
         report_fn = kwargs.pop('report_fn')
         token = kwargs.pop('token')
-        params = kwargs.pop('params').params
+        params = kwargs.pop('params')
         cal_data = kwargs.pop('cal_data')
 
         print(f'call calibrate out with {report_fn} {token} {params}')
@@ -338,7 +338,7 @@ class InstrumentController(QObject):
     def measure(self, **kwargs):
         report_fn = kwargs.pop('report_fn')
         token = kwargs.pop('token')
-        params = kwargs.pop('params').params
+        params = kwargs.pop('params')
         task = kwargs.pop('task')
         print(f'call measure with {report_fn} {token} {params} {task}')
 
@@ -428,7 +428,7 @@ class InstrumentController(QObject):
     def measurePulse(self, **kwargs):
         report_fn = kwargs.pop('report_fn')
         token = kwargs.pop('token')
-        params = kwargs.pop('params').params
+        params = kwargs.pop('params')
         task = kwargs.pop('task')
         print(f'call continuous measure with {report_fn} {token} {params} {task}')
 
