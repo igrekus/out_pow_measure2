@@ -63,7 +63,7 @@ class CaliModel(QAbstractTableModel):
             p = self._pows[row]
             if col == 0:
                 return QVariant(p)
-            return QVariant(self._display_fn(self._data[p].get(self._freqs[col - 1], (0, 0))))
+            return QVariant(float(self._display_fn(self._data[p].get(self._freqs[col - 1], (0, 0)))))
         return QVariant()
 
     def calData(self):
