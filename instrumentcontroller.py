@@ -13,6 +13,7 @@ GIGA = 1_000_000_000
 MEGA = 1_000_000
 KILO = 1_000
 MILLI = 1 / 1_000
+MICRO = 1 / 1_000_000
 
 
 # + TODO save\load calibration data
@@ -453,13 +454,13 @@ class InstrumentController(QObject):
         # src = self._instruments['Источник']
 
         avg = params['avg']
-        x_start = params['x_start']
-        x_scale = params['x_scale']
+        x_start = params['x_start'] * MICRO
+        x_scale = params['x_scale'] * MICRO
         y_max = params['y_max']
         y_scale = params['y_scale']
         trig_level = params['trig_level']
-        mark_1 = params['mark_1']
-        mark_2 = params['mark_2']
+        mark_1 = params['mark_1'] * MICRO
+        mark_2 = params['mark_2'] * MICRO
 
         gen.send('*RST')
         meter.send('*RST')
@@ -483,7 +484,7 @@ class InstrumentController(QObject):
         meter.send(f'TRIG:SEQ:LEV {trig_level}')
 
         meter.send(f'SENS1:SWE1:OFFS:TIME {mark_1}')
-        meter.send(f'SENS1:SWE1:TIME {mark_2}')
+        meter.send(f'SENS1:SWE1:TIME {mark_2 - mark_1}')
 
         # автоматическое измерение ошибается в первой точке, измеряем пустышку
         # почему - хз
@@ -527,6 +528,7 @@ class InstrumentController(QObject):
                 'p': p_ref,
                 'read_pow': read_pow,
                 'adjusted_pow': adjusted_pow,
+                'p_ref': p_ref,
             }
 
             if mock_enabled:
