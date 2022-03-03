@@ -363,6 +363,7 @@ class InstrumentController(QObject):
 
         gen = self._instruments['Генератор']
         meter = self._instruments['Изм. мощности']
+        src = self._instruments['Источник']
 
         avg = params['avg']
 
@@ -414,6 +415,7 @@ class InstrumentController(QObject):
                 time.sleep(0.1)
 
             read_pow = float(meter.query('FETCH?').strip())
+            read_curr = float(src.query('MEAS:CURR?').strip())
             adjusted_pow = read_pow + delta_out
 
             raw_point = {
@@ -422,6 +424,7 @@ class InstrumentController(QObject):
                 'read_pow': read_pow,
                 'adjusted_pow': adjusted_pow,
                 'p_ref': p_ref,
+                'read_curr': read_curr,
             }
 
             if mock_enabled:
@@ -454,7 +457,7 @@ class InstrumentController(QObject):
 
         gen = self._instruments['Генератор']
         meter = self._instruments['Изм. мощности']
-        # src = self._instruments['Источник']
+        src = self._instruments['Источник']
 
         avg = params['avg']
         x_start = params['x_start'] * MICRO
@@ -528,6 +531,7 @@ class InstrumentController(QObject):
                 time.sleep(0.5)
 
             read_pow = float(meter.query('FETCH?').strip())
+            read_curr = float(src.query('MEAS:CURR?').strip())
             adjusted_pow = read_pow + delta_out
 
             point = {
@@ -536,6 +540,7 @@ class InstrumentController(QObject):
                 'read_pow': read_pow,
                 'adjusted_pow': adjusted_pow,
                 'p_ref': p_ref,
+                'read_curr': read_curr,
             }
 
             if mock_enabled:
