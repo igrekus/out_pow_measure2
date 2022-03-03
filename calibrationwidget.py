@@ -27,7 +27,8 @@ class CalibrationWidget(QWidget):
         self._ui = uic.loadUi('calibrationwidget.ui', self)
 
         self._worker = BackgroundWorker(self)
-        self._token = CancelToken()
+        self._tokenIn = CancelToken()
+        self._tokenOut = CancelToken()
 
         self._controller = controller
 
@@ -55,13 +56,13 @@ class CalibrationWidget(QWidget):
 
     def _calibrateIn(self):
         self._cal_in_model.clear()
-        self._token = CancelToken()
+        self._tokenIn = CancelToken()
         self._startWorker(
             fn=self._controller.calibrateIn,
             cb=self._calibrateInFinishedCallback,
             report_fn=self._calibrateInProgress,
             params=self._controller.secondaryParams.params,
-            token=self._token,
+            token=self._tokenIn,
         )
 
     def _calibrateOut(self):
@@ -70,13 +71,13 @@ class CalibrationWidget(QWidget):
             return
 
         self._cal_out_model.clear()
-        self._token = CancelToken()
+        self._tokenOut = CancelToken()
         self._startWorker(
             fn=self._controller.calibrateOut,
             cb=self._calibrateOutFinishedCallback,
             report_fn=self._calibrateOutProgress,
             params=self._controller.secondaryParams.params,
-            token=self._token,
+            token=self._tokenOut,
             cal_data=self._cal_in_model.calData(),
         )
 
@@ -128,11 +129,15 @@ class CalibrationWidget(QWidget):
 
     @pyqtSlot()
     def on_btnCalibrateInCancel_clicked(self):
-        self._token.cancelled = True
+        self._tokenIn.cancelled = True
 
     @pyqtSlot()
     def on_btnCalibrateOut_clicked(self):
         self._calibrateOut()
+
+    @pyqtSlot()
+    def on_btnCalibrateOutCancel_clicked(self):
+        self._tokenOut.cancelled = True
 
     @pyqtSlot()
     def on_btnLoadIn_clicked(self):
