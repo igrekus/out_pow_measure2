@@ -202,7 +202,8 @@ class InstrumentController(QObject):
                 meter.send('ABORT')
                 meter.send('INIT')
 
-                time.sleep(0.2)
+                if not mock_enabled:
+                    time.sleep(0.5)
 
                 label_pow = p
                 new_pow = p
@@ -223,7 +224,7 @@ class InstrumentController(QObject):
                         meter.send('ABORT')
                         meter.send('INIT')
 
-                        time.sleep(0.2)
+                        time.sleep(0.5)
 
                         read_pow = float(meter.query('FETCH?').strip())
 
@@ -307,7 +308,8 @@ class InstrumentController(QObject):
             meter.send('ABORT')
             meter.send('INIT')
 
-            time.sleep(0.2)
+            if not mock_enabled:
+                time.sleep(0.2)
 
             read_pow = float(meter.query('FETCH?').strip())
             delta = p - read_pow
@@ -408,7 +410,8 @@ class InstrumentController(QObject):
             meter.send('ABORT')
             meter.send('INIT')
 
-            time.sleep(0.1)
+            if not mock_enabled:
+                time.sleep(0.1)
 
             read_pow = float(meter.query('FETCH?').strip())
             adjusted_pow = read_pow + delta_out
@@ -493,8 +496,11 @@ class InstrumentController(QObject):
         gen.send(f'POW {p1}dbm')
         gen.send(f'FREQ {f1}')
         meter.send(f'SENS1:FREQ {f1}')
+        if not mock_enabled:
+            time.sleep(1)
         gen.send('OUTP ON')
-        time.sleep(0.1)
+        if not mock_enabled:
+            time.sleep(1)
         meter.query('FETCH?')
 
         index = 0
@@ -518,7 +524,8 @@ class InstrumentController(QObject):
             meter.send(f'SENS1:FREQ {f}')
             gen.send('OUTP ON')
 
-            time.sleep(0.2)
+            if not mock_enabled:
+                time.sleep(0.5)
 
             read_pow = float(meter.query('FETCH?').strip())
             adjusted_pow = read_pow + delta_out
