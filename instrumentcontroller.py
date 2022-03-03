@@ -193,7 +193,7 @@ class InstrumentController(QObject):
         for p in pows:
             for f in freqs:
                 if token.cancelled:
-                    return False, 'measure cancel'
+                    return False, 'calibrate in cancel'
 
                 gen.send(f'POW {p}dbm')
                 gen.send(f'FREQ {f}')
@@ -295,7 +295,7 @@ class InstrumentController(QObject):
         result = []
         for point in cal_data:
             if token.cancelled:
-                return False, 'measure cancel'
+                return False, 'calibrate out cancel'
 
             p = point['read_pow']
             f = point['f']
@@ -396,7 +396,7 @@ class InstrumentController(QObject):
         result = []
         for row in task:
             if token.cancelled:
-                return False, 'measure cancel'
+                return False, 'measure continuous cancel'
 
             p = row['p']
             f = row['f']
@@ -515,7 +515,7 @@ class InstrumentController(QObject):
         result = []
         for t in task:
             if token.cancelled:
-                return False, 'measure cancel'
+                return False, 'measure pulse cancel'
 
             f = t['f']
             p = t['p']
