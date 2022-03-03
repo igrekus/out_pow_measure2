@@ -93,4 +93,4 @@ class PulseWidget(QWidget):
 
     @pyqtSlot()
     def on_btnExport_clicked(self):
-        self._model.export('cont')
+        self._model.export('pulse')

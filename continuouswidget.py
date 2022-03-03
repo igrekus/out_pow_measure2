@@ -88,4 +88,4 @@ class ContinuousWidget(QWidget):
 
     @pyqtSlot()
     def on_btnExport_clicked(self):
-        self._model.export('pulse')
+        self._model.export('continuous')
