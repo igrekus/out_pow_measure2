@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>690</width>
-    <height>461</height>
+    <height>444</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -26,6 +26,13 @@
       <widget class="QPushButton" name="btnMeasure">
        <property name="text">
         <string>Измерение</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnCancel">
+       <property name="text">
+        <string>Отмена</string>
        </property>
       </widget>
      </item>
