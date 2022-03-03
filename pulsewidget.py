@@ -4,7 +4,9 @@ from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 
 from mytools.backgroundworker import BackgroundWorker, CancelToken, TaskResult
 from instrumentcontroller import InstrumentController
-from pulsemeasuremodel import PulseMeasureModel
+
+from pulsemeasurepowmodel import PulseMeasurePowModel
+from pulsemeasurecurrmodel import PulseMeasureCurrModel
 
 
 class PulseWidget(QWidget):
@@ -26,7 +28,8 @@ class PulseWidget(QWidget):
         self._controller = controller
 
         self._task = list()
-        self._model = PulseMeasureModel(parent=self)
+        self._modelPow = PulseMeasurePowModel(parent=self)
+        self._modelCurr = PulseMeasureCurrModel(parent=self)
 
         self._connectSignals()
         self._initUi()
@@ -36,15 +39,21 @@ class PulseWidget(QWidget):
         self._measureReport.connect(self.on_measureReport, type=Qt.QueuedConnection)
 
     def _initUi(self):
-        self._ui.tableMeasure.setModel(self._model)
-        self._ui.tableMeasure.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+        self._ui.tableMeasurePow.setModel(self._modelPow)
+        self._ui.tableMeasurePow.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+
+        self._ui.tableMeasureCurr.setModel(self._modelCurr)
+        self._ui.tableMeasureCurr.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
 
     # worker dispatch
     def _startWorker(self, fn, cb, **kwargs):
         self._worker.runTask(fn=fn, fn_finished=cb, **kwargs)
 
-    def _start(self):
-        self._model.clear()
+    def _measure(self):
+        self._modelPow.clear()
+        self._modelCurr.clear()
+        if not self._task:
+            return
         self._token = CancelToken()
         self._startWorker(
             fn=self._controller.measurePulse,
@@ -81,16 +90,14 @@ class PulseWidget(QWidget):
     @pyqtSlot(dict)
     def on_measureReport(self, data):
         print('measure point:', data)
-        self._model.update(data)
+        self._modelPow.update(data)
+        self._modelCurr.update(data)
 
     @pyqtSlot()
     def on_btnMeasure_clicked(self):
-        self._start()
-
-    @pyqtSlot()
-    def on_btnStop_clicked(self):
-        self._stop()
+        self._measure()
 
     @pyqtSlot()
     def on_btnExport_clicked(self):
-        self._model.export('pulse')
+        self._modelPow.export('pulse-pow')
+        self._modelCurr.export('pulse-curr')

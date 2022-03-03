@@ -1,18 +1,17 @@
 import datetime
 import os
-from collections import defaultdict
 
+from collections import defaultdict
 from subprocess import Popen
 
-import pandas as pd
-from forgot_again.file import make_dirs
 from pandas import DataFrame
 from PyQt5.QtCore import Qt, QAbstractTableModel, QVariant
 
+from forgot_again.file import make_dirs
 from instr.const import GIGA
 
 
-class PulseMeasureModel(QAbstractTableModel):
+class PulseMeasurePowModel(QAbstractTableModel):
     def __init__(self, parent=None, header=None):
         super().__init__(parent)
 
