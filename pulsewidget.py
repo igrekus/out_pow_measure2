@@ -50,7 +50,7 @@ class PulseWidget(QWidget):
             fn=self._controller.measurePulse,
             cb=self._measureFinishedCallback,
             report_fn=self._measureInProgress,
-            params=self._controller.secondaryParams,
+            params=self._controller.secondaryParams.params,
             token=self._token,
             task=self._task,
         )

@@ -52,7 +52,7 @@ class ContinuousWidget(QWidget):
             fn=self._controller.measure,
             cb=self._measureFinishedCallback,
             report_fn=self._measureInProgress,
-            params=self._controller.secondaryParams,
+            params=self._controller.secondaryParams.params,
             token=self._token,
             task=self._task
         )
