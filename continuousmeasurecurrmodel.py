@@ -1,18 +1,17 @@
 import datetime
 import os
-from collections import defaultdict
 
+from collections import defaultdict
 from subprocess import Popen
 
-import pandas as pd
-from forgot_again.file import make_dirs
 from pandas import DataFrame
 from PyQt5.QtCore import Qt, QAbstractTableModel, QVariant
 
+from forgot_again.file import make_dirs
 from instr.const import GIGA
 
 
-class ContinuousMeasureModel(QAbstractTableModel):
+class ContinuousMeasureCurrModel(QAbstractTableModel):
     def __init__(self, parent=None, header=None):
         super().__init__(parent)
 
@@ -36,7 +35,7 @@ class ContinuousMeasureModel(QAbstractTableModel):
         f = round(point['f'] / GIGA, 3)
         self._pows = sorted(set(self._pows + [p]))
         self._freqs = sorted(set(self._freqs + [f]))
-        self._data[p][f] = (point['read_pow'], point['adjusted_pow'])
+        self._data[p][f] = (point['read_curr'], 0)
 
         self._header = ['Pвх, дБм'] + [f'Fвх={v}, ГГц' for v in self._freqs]
         self.endResetModel()
@@ -65,7 +64,7 @@ class ContinuousMeasureModel(QAbstractTableModel):
             p = self._pows[row]
             if col == 0:
                 return QVariant(p)
-            return QVariant(self._data[p].get(self._freqs[col - 1], (0, 0))[1])
+            return QVariant(self._data[p].get(self._freqs[col - 1], (0, 0))[0])
 
         return QVariant()
 

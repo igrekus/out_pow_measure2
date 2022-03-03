@@ -2,7 +2,8 @@ from PyQt5 import uic
 from PyQt5.QtWidgets import QWidget, QHeaderView
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal
 
-from continuousmeasuremodel import ContinuousMeasureModel
+from continuousmeasurecurrmodel import ContinuousMeasureCurrModel
+from continuousmeasurepowmodel import ContinuousMeasurePowModel
 from mytools.backgroundworker import BackgroundWorker, CancelToken, TaskResult
 from instrumentcontroller import InstrumentController
 
@@ -26,7 +27,8 @@ class ContinuousWidget(QWidget):
         self._controller = controller
 
         self._task = list()
-        self._model = ContinuousMeasureModel(parent=self)
+        self._modelPow = ContinuousMeasurePowModel(parent=self)
+        self._modelCurr = ContinuousMeasureCurrModel(parent=self)
 
         self._connectSignals()
         self._initUi()
@@ -36,15 +38,19 @@ class ContinuousWidget(QWidget):
         self._measureReport.connect(self.on_measureReport, type=Qt.QueuedConnection)
 
     def _initUi(self):
-        self._ui.tableMeasure.setModel(self._model)
-        self._ui.tableMeasure.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+        self._ui.tableMeasurePow.setModel(self._modelPow)
+        self._ui.tableMeasurePow.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+
+        self._ui.tableMeasureCurr.setModel(self._modelCurr)
+        self._ui.tableMeasureCurr.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
 
     # worker dispatch
     def _startWorker(self, fn, cb, **kwargs):
         self._worker.runTask(fn=fn, fn_finished=cb, **kwargs)
 
     def _measure(self):
-        self._model.clear()
+        self._modelPow.clear()
+        self._modelCurr.clear()
         if not self._task:
             return
         self._token = CancelToken()
@@ -80,7 +86,8 @@ class ContinuousWidget(QWidget):
     @pyqtSlot(dict)
     def on_measureReport(self, data):
         print('measure point:', data)
-        self._model.update(data)
+        self._modelPow.update(data)
+        self._modelCurr.update(data)
 
     @pyqtSlot()
     def on_btnMeasure_clicked(self):
@@ -88,4 +95,5 @@ class ContinuousWidget(QWidget):
 
     @pyqtSlot()
     def on_btnExport_clicked(self):
-        self._model.export('continuous')
+        self._modelPow.export('continuous-pow')
+        self._modelCurr.export('continuous-curr')
