@@ -18,8 +18,9 @@ MICRO = 1 / 1_000_000
 
 # + TODO save\load calibration data
 # + TODO change table format according to reqs
-# TODO show in cal pow + diff
-# TODO show diff in out cal
+# + TODO show in cal pow + diff
+# + TODO show diff in out cal
+# TODO add limits for measurement task via gui
 
 class InstrumentController(QObject):
     pointReady = pyqtSignal()
