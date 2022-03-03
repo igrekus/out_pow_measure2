@@ -159,8 +159,10 @@ class InstrumentController(QObject):
 
         avg = params['avg']
 
-        pows = [round(x, 1) for x in np.arange(start=p_min, stop=p_max + 0.0001, step=p_delta)]
-        freqs = [round(x) for x in np.arange(start=f_min, stop=f_max + 0.0001, step=f_delta)]
+        accuracy = 0.05
+
+        pows = [round(x, 1) for x in np.arange(start=p_min, stop=p_max + 0.000001, step=p_delta)]
+        freqs = [round(x) for x in np.arange(start=f_min, stop=f_max + 0.000001, step=f_delta)]
 
         self._init()
 
@@ -201,18 +203,20 @@ class InstrumentController(QObject):
 
                 time.sleep(0.2)
 
+                label_pow = p
+                new_pow = p
                 read_pow = float(meter.query('FETCH?').strip())
                 diff = p - read_pow
                 prev = diff
 
                 if not mock_enabled:
-                    while abs(diff) > 0.05:
-
+                    while abs(diff) > accuracy:
+                        prev = diff
                         if token.cancelled:
+                            gen.send('OUTP OFF')
                             return False, 'measure cancel'
 
-                        new_pow = p + diff
-
+                        new_pow = new_pow + diff
                         gen.send(f'POW {new_pow}dbm')
 
                         meter.send('ABORT')
@@ -226,7 +230,7 @@ class InstrumentController(QObject):
 
                 raw_point = {
                     'f': f,
-                    'p': p,
+                    'p': label_pow,
                     'read_pow': read_pow,
                     'delta': prev,
                 }
@@ -235,6 +239,7 @@ class InstrumentController(QObject):
                     raw_point = mocked_raw_data[index]
                     index += 1
 
+                print(raw_point)
                 report_fn(raw_point)
                 result.append(raw_point)
 
