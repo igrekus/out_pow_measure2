@@ -98,6 +98,10 @@ class PulseWidget(QWidget):
         self._measure()
 
     @pyqtSlot()
+    def on_btnCancel_clicked(self):
+        self._token.cancelled = True
+
+    @pyqtSlot()
     def on_btnExport_clicked(self):
         self._modelPow.export('pulse-pow')
         self._modelCurr.export('pulse-curr')
